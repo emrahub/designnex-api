@@ -111,10 +111,10 @@ npm install
 
 **Set Up Environment Variables**
 
-Create a new file named `.env` in the root of your project and add the following content:
+Create a new file named `.env` in the `server` directory and add the following content:
 
 ```env
-OPENAI_API_KEY=
+OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
 ```
 
 Replace the placeholder values with your actual OpenAI credentials. You can obtain these credentials by signing up on the [Open website](https://openai.com/).

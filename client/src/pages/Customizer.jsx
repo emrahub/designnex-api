@@ -12,6 +12,8 @@ import { AIPicker, ColorPicker, CustomButton, FilePicker, Tab } from '../compone
 
 const Customizer = () => {
   const snap = useSnapshot(state);
+  // determine backend URL based on environment config
+  const backendUrl = config[import.meta.env.MODE || 'development'].backendUrl;
 
   const [file, setFile] = useState('');
 
@@ -53,7 +55,7 @@ const Customizer = () => {
     try {
       setGeneratingImg(true);
 
-      const response = await fetch('http://localhost:8080/api/v1/dalle', {
+      const response = await fetch(backendUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
