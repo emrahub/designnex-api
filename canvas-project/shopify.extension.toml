@@ -1,0 +1,6 @@
+name = "product-customizer"
+type = "theme"
+
+[[extensions]]
+name = "product-customizer"
+type = "theme"

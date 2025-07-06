@@ -1,0 +1,46 @@
+{
+  "name": "Product Customizer",
+  "settings": {
+    "heading": {
+      "label": "Section Heading",
+      "info": "Enter the heading text for the customizer section"
+    },
+    "description": {
+      "label": "Description",
+      "info": "Enter a description for the customizer section"
+    },
+    "show_heading": {
+      "label": "Show Section Heading",
+      "info": "Toggle to show or hide the section heading"
+    },
+    "canvas_size": {
+      "label": "Canvas Size",
+      "info": "Select the size of the design canvas",
+      "options": {
+        "small": "Small (600x450)",
+        "medium": "Medium (800x600)",
+        "large": "Large (1000x750)"
+      }
+    }
+  },
+  "blocks": {
+    "design_category": {
+      "name": "Design Category",
+      "settings": {
+        "category_name": {
+          "label": "Category Name",
+          "info": "Enter the name for this design category"
+        },
+        "design_list": {
+          "label": "Design List (JSON)",
+          "info": "Enter designs in JSON format: [{\"id\":1,\"name\":\"Design Name\",\"category\":\"Category\",\"preview\":\"🎨\"}]"
+        }
+      }
+    }
+  },
+  "presets": {
+    "default": {
+      "name": "Product Customizer"
+    }
+  }
+}

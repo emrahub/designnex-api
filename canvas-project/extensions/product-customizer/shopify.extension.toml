@@ -1,0 +1,28 @@
+type = "theme"
+name = "Product Customizer"
+
+[extensions.theme]
+  [[extensions.theme.files]]
+    template = "product"
+    name = "product-customizer"
+
+[settings]
+  [settings.canvas_size]
+    type = "select"
+    default = "medium"
+    label = "Canvas Size"
+    options = [
+      { label = "Small (600x450)", value = "small" },
+      { label = "Medium (800x600)", value = "medium" },
+      { label = "Large (1000x750)", value = "large" }
+    ]
+
+  [settings.show_heading]
+    type = "checkbox"
+    default = true
+    label = "Show Section Heading"
+
+  [settings.heading_text]
+    type = "text"
+    default = "Customize Your Product"
+    label = "Section Heading"

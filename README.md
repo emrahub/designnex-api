@@ -1,275 +1,214 @@
+# 🎨 DesignNex Studio - 3D Product Customizer
+
+> **Advanced 3D product customization platform with AI-powered design generation**
+
 <div align="center">
-  <br />
-    <a href="https://youtu.be/ZqEa8fTxypQ?feature=shared" target="_blank">
-      <img src="https://github.com/adrianhajdin/project_threejs_ai/assets/151519281/a7ad05c5-28a5-423f-b6ac-c98f8a5c428a" alt="Project Banner">
-    </a>
-  <br />
- 
-  <div>
-    <img src="https://img.shields.io/badge/-React_JS-black?style=for-the-badge&logoColor=white&logo=react&color=61DAFB" alt="react.js" />
-    <img src="https://img.shields.io/badge/-Three_JS-black?style=for-the-badge&logoColor=white&logo=threedotjs&color=000000" alt="three.js" />
-    <img src="https://img.shields.io/badge/-Tailwind_CSS-black?style=for-the-badge&logoColor=white&logo=tailwindcss&color=06B6D4" alt="tailwindcss" />
-  </div>
-
-  <h3 align="center">A 3D Dev Swag Website</h3>
-
-   <div align="center">
-     Build this project step by step with our detailed tutorial on <a href="https://www.youtube.com/@javascriptmastery/videos" target="_blank"><b>JavaScript Mastery</b></a> YouTube. Join the JSM family!
-    </div>
+  <img src="https://img.shields.io/badge/-React_JS-black?style=for-the-badge&logoColor=white&logo=react&color=61DAFB" alt="react.js" />
+  <img src="https://img.shields.io/badge/-Three_JS-black?style=for-the-badge&logoColor=white&logo=threedotjs&color=000000" alt="three.js" />
+  <img src="https://img.shields.io/badge/-TypeScript-black?style=for-the-badge&logoColor=white&logo=typescript&color=3178C6" alt="typescript" />
+  <img src="https://img.shields.io/badge/-Tailwind_CSS-black?style=for-the-badge&logoColor=white&logo=tailwindcss&color=06B6D4" alt="tailwindcss" />
+  <img src="https://img.shields.io/badge/-OpenAI-black?style=for-the-badge&logoColor=white&logo=openai&color=412991" alt="openai" />
 </div>
 
-## 📋 <a name="table">Table of Contents</a>
+## ✨ Features
 
-1. 🤖 [Introduction](#introduction)
-2. ⚙️ [Tech Stack](#tech-stack)
-3. 🔋 [Features](#features)
-4. 🤸 [Quick Start](#quick-start)
-5. 🕸️ [Snippets](#snippets)
-6. 🔗 [Links](#links)
-7. 🚀 [More](#more)
+- **🎨 Canvas Designer**: Professional design tools with layers, undo/redo, drag-drop functionality
+- **🤖 AI Design Generator**: DALL-E powered custom design creation with text prompts
+- **📱 3D Real-time Preview**: Interactive Three.js 3D visualization with auto-sync
+- **🔧 Advanced Tools**: Color picker, text editor, image upload, geometric shapes, draggable toolbar
+- **💾 Design Management**: Save, load, and manage custom designs locally
+- **🛍️ Shopify Ready**: Architected for future e-commerce integration
+- **⚡ Real-time Sync**: Automatic synchronization between canvas and 3D preview
+- **📱 Responsive**: Works seamlessly across all device sizes
 
-## 🚨 Tutorial
+## 🏗️ Project Structure
 
-This repository contains the code corresponding to an in-depth tutorial available on our YouTube channel, <a href="https://www.youtube.com/@javascriptmastery/videos" target="_blank"><b>JavaScript Mastery</b></a>. 
-
-If you prefer visual learning, this is the perfect resource for you. Follow our tutorial to learn how to build projects like these step-by-step in a beginner-friendly manner!
-
-<a href="https://youtu.be/ZqEa8fTxypQ?feature=shared" target="_blank"><img src="https://github.com/sujatagunale/EasyRead/assets/151519281/1736fca5-a031-4854-8c09-bc110e3bc16d" /></a>
-
-## <a name="introduction">🤖 Introduction</a>
-
-Create your own style with our new 3D Swag Customization App. Pick colors, add logos, and try AI designs to make your virtual swag unique. Built using React.js, Three.js, and OpenAI to show the usage of a 3D world with AI
-
-If you're getting started and need assistance or face any bugs, join our active Discord community with over 27k+ members. It's a place where people help each other out.
-
-<a href="https://discord.com/invite/n6EdbFJ" target="_blank"><img src="https://github.com/sujatagunale/EasyRead/assets/151519281/618f4872-1e10-42da-8213-1d69e486d02e" /></a>
-
-## <a name="tech-stack">⚙️ Tech Stack</a>
-
-- React.js
-- Three.js
-- React Three Fiber
-- React Three Drei
-- Vite
-- Tailwind CSS
-- Node.js
-- Express.js
-- OpenAI
-- Framer Motion
-- Valtio
-
-## <a name="features">🔋 Features</a>
-
-👉 **3D Swag Generation**: Generate unique 3D shirts/swag items dynamically
-
-👉 **Color Customization**: Apply any color to the 3D shirt/swag for personalized styling.
-
-👉 **Logo Upload Functionality**: Enable users to upload any file as a logo, integrating it seamlessly onto the 3D shirt.
-
-👉 **Texture Image Upload**: Allow users to upload texture images to style the 3D shirt/swag.
-
-👉 **AI-Generated Logo Integration**: Utilize AI to generate logos and intelligently apply them to the 3D shirt.
-
-👉 **AI-Generated Textures**: Implement AI-generated textures for enhanced 3D shirt customization.
-
-👉 **Download Options**:Dynamically change the application theme based on the selected color, enhancing user experience.
-
-👉 **Theme Change with Color Selection**: Dynamically change the application theme based on the selected color, enhancing user experience
-
-👉 **Responsive 3D Application**: Ensure the application is responsive, delivering a seamless experience across various devices.
-
-👉 **Framer Motion Animation**: Implement framer motion animations for smooth transitions between different 3D models.
-
-and many more, including code architecture and reusability 
-
-## <a name="quick-start">🤸 Quick Start</a>
-
-Follow these steps to set up the project locally on your machine.
-
-**Prerequisites**
-
-Make sure you have the following installed on your machine:
-
-- [Git](https://git-scm.com/)
-- [Node.js](https://nodejs.org/en)
-- [npm](https://www.npmjs.com/) (Node Package Manager)
-
-**Cloning the Repository**
-
-```bash
-git clone https://github.com/adrianhajdin/project_threejs_ai.git
-cd project_threejs_ai
+```
+project_threejs_ai/
+├── 🎨 canvas-project/          (Main Application - React + TypeScript)
+│   ├── src/
+│   │   ├── components/         (Canvas, 3D Viewer, UI Components)
+│   │   │   ├── Canvas.tsx
+│   │   │   ├── ThreeJSCanvas.tsx
+│   │   │   ├── UnifiedProductCustomizer.tsx
+│   │   │   ├── DraggableToolbar.tsx
+│   │   │   └── sidebar/        (Design tools)
+│   │   ├── services/           (API integrations)
+│   │   │   └── aiService.ts    (OpenAI DALL-E integration)
+│   │   ├── store/              (State management - Valtio)
+│   │   ├── context/            (React contexts)
+│   │   └── three-components/   (Three.js components)
+│   └── public/                 (3D models, assets)
+│       └── shirt_baked.glb     (3D t-shirt model)
+├── 🔧 server/                  (Backend API - Node.js + Express)
+│   ├── routes/
+│   │   └── dalle.routes.js     (AI image generation API)
+│   ├── index.js                (Server setup with CORS)
+│   └── package.json
+├── 📁 client/                  (Legacy - not in active use)
+└── 📄 Documentation
 ```
 
-**Installation**
+## 🚀 Quick Start
 
-Install the project dependencies using npm in both client and server folders:
+### Prerequisites
+- **Node.js** 18+ 
+- **OpenAI API Key** (for AI design generation)
+- **Git** (for version control)
 
-```bash
-npm install
-```
+### Installation & Setup
 
-**Set Up Environment Variables**
-
-Create a new file named `.env` in the `server` directory and add the following content:
-
-```env
-OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
-```
-
-Replace the placeholder values with your actual OpenAI credentials. You can obtain these credentials by signing up on the [Open website](https://openai.com/).
-
-**Running the Project**
-
-1. Server
+1. **Clone Repository**
    ```bash
+   git clone [your-private-repo-url]
+   cd project_threejs_ai
+   ```
+
+2. **Backend Setup**
+   ```bash
+   cd server
+   npm install
+   
+   # Create environment file
+   echo "OPENAI_API_KEY=your_openai_api_key_here" > .env
+   
+   # Start backend server
    npm start
    ```
-2. Client
+   ✅ **Backend running on:** `http://localhost:8080`
+
+3. **Frontend Setup**
    ```bash
+   cd ../canvas-project
+   npm install
+   
+   # Start development server  
    npm run dev
    ```
+   ✅ **Frontend running on:** `http://localhost:5173`
 
-Open [http://localhost:5173](http://localhost:5173) in your browser to view the project.
+4. **Access Application**
+   - Open browser → `http://localhost:5173`
+   - Start designing! 🎨
 
-## <a name="snippets">🕸️ Snippets</a>
+## 🎮 How to Use
 
-<details>
-<summary><code>Customizer.jsx</code></summary>
+### 🎨 Design Creation
+1. **Canvas Tools**: Use sidebar to add text, shapes, upload images
+2. **AI Generator**: Enter text prompt → Click "Generate AI Design" 
+3. **3D Preview**: Real-time preview updates automatically
+4. **Customize**: Adjust colors, sizes, positions with toolbar
+5. **Save/Export**: Save designs locally or download as images
 
-```javascript
-<button className='download-btn' onClick={downloadCanvasToImage}>
-  <img
-    src={download}
-    alt='download_image'
-    className='w-3/5 h-3/5 object-contain'
-  />
-</button>
+### 🤖 AI Design Generation
 ```
-</details>
-
-<details>
-<summary><code>index.css</code></summary>
-
-```css
-@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,200;0,600;1,900&display=swap");
-@import url("https://rsms.me/inter/inter.css");
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-html {
-  font-family: "Inter", sans-serif;
-}
-
-@supports (font-variation-settings: normal) {
-  html {
-    font-family: "Inter var", sans-serif;
-  }
-}
-
-.app {
-  @apply relative w-full h-screen overflow-hidden;
-}
-
-.home {
-  @apply w-fit xl:h-full flex xl:justify-between justify-start items-start flex-col xl:py-8 xl:px-36 sm:p-8 p-6 max-xl:gap-7 absolute z-10;
-}
-
-.home-content {
-  @apply flex-1 xl:justify-center justify-start flex flex-col gap-10;
-}
-
-.head-text {
-  @apply xl:text-[10rem] text-[6rem] xl:leading-[11rem] leading-[7rem] font-black text-black;
-}
-
-.download-btn {
-  @apply w-14 h-14 flex justify-center items-center rounded-full glassmorphism cursor-pointer outline-none;
-}
-
-.editortabs-container {
-  @apply glassmorphism w-16 border-[2px] rounded-lg flex flex-col justify-center items-center ml-1 py-4 gap-4;
-}
-
-.filtertabs-container {
-  @apply absolute z-10 bottom-5 right-0 left-0 w-full flex justify-center items-center flex-wrap gap-4;
-}
-
-.aipicker-container {
-  @apply absolute left-full ml-3 glassmorphism p-3 w-[195px] h-[220px] rounded-md flex flex-col gap-4;
-}
-
-.aipicker-textarea {
-  @apply w-full bg-transparent text-sm border border-gray-300 p-2 outline-none flex-1;
-}
-
-.filepicker-container {
-  @apply absolute left-full ml-3 glassmorphism p-3 w-[195px] h-[220px] flex flex-col rounded-md;
-}
-
-.filepicker-label {
-  @apply border border-gray-300 py-1.5 px-2 rounded-md shadow-sm text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 cursor-pointer w-fit;
-}
-
-.tab-btn {
-  @apply w-14 h-14 flex justify-center items-center cursor-pointer select-none;
-}
-
-.glassmorphism {
-  background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 2px 30px 0 rgba(31, 38, 135, 0.07);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-input[type="file"] {
-  z-index: -1;
-  position: absolute;
-  opacity: 0;
-}
-
-.sketch-picker {
-  width: 170px !important;
-  background: rgba(255, 255, 255, 0.25) !important;
-  box-shadow: 0 2px 30px 0 rgba(31, 38, 135, 0.07) !important;
-  backdrop-filter: blur(4px) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  border-radius: 6px !important;
-}
-
-.sketch-picker > div:nth-child(3) {
-  display: none !important;
-}
+Example Prompts:
+• "Minimalist mountain logo in blue and white"
+• "Geometric tiger face with bold lines" 
+• "Vintage coffee shop emblem with retro styling"
+• "Abstract galaxy design with purple nebula"
 ```
-</details>
 
-## <a name="links">🔗 Links</a>
+### 🔧 Advanced Features
+- **Draggable Toolbar**: Move tools anywhere on screen
+- **Undo/Redo**: Full history management
+- **Layer Control**: Bring to front, duplicate objects
+- **Auto-Sync**: Canvas automatically syncs to 3D model
+- **Responsive Design**: Works on desktop, tablet, mobile
 
-Assets used in the project are [here](https://drive.google.com/drive/folders/166wA5NsMV_5D8NN7ujDDbPXC1X65vf2I)
+## 🔧 Configuration
 
-## <a name="more">🚀 More</a>
+### Environment Variables
+```bash
+# Backend (.env)
+OPENAI_API_KEY=sk-proj-...your-key-here
 
-**Advance your skills with Next.js 14 Pro Course**
+# Frontend (optional - for client-side features) 
+VITE_OPENAI_API_KEY=sk-proj-...your-key-here
+```
 
-Enjoyed creating this project? Dive deeper into our PRO courses for a richer learning adventure. They're packed with detailed explanations, cool features, and exercises to boost your skills. Give it a go!
+### Feature Toggles
+- ✅ **With API Key**: Real DALL-E generation, full AI features
+- 🎭 **Without API Key**: Demo mode with placeholder images
+- 🔄 **Always Available**: Canvas tools, 3D preview, save/load
 
-<a href="https://jsmastery.pro/next14" target="_blank">
-<img src="https://github.com/sujatagunale/EasyRead/assets/151519281/557837ce-f612-4530-ab24-189e75133c71" alt="Project Banner">
-</a>
+## 🛠️ Tech Stack
 
-<br />
-<br />
+### Frontend
+- **React 18** + **TypeScript** (Type-safe development)
+- **Three.js** + **React Three Fiber** (3D rendering)
+- **Fabric.js** (Canvas manipulation & drawing)
+- **Valtio** (Reactive state management)
+- **Tailwind CSS** (Utility-first styling)
+- **Lucide React** (Beautiful icons)
+- **Vite** (Fast development & build)
 
-**Accelerate your professional journey with the Expert Training program**
+### Backend  
+- **Node.js** + **Express** (REST API server)
+- **OpenAI API** (DALL-E image generation)
+- **CORS** (Cross-origin resource sharing)
+- **dotenv** (Environment variable management)
 
-And if you're hungry for more than just a course and want to understand how we learn and tackle tech challenges, hop into our personalized masterclass. We cover best practices, different web skills, and offer mentorship to boost your confidence. Let's learn and grow together!
+### Development Tools
+- **ESLint** + **TypeScript** (Code quality)
+- **PostCSS** (CSS processing)
+- **Nodemon** (Development server)
 
-<a href="https://www.jsmastery.pro/masterclass" target="_blank">
-<img src="https://github.com/sujatagunale/EasyRead/assets/151519281/fed352ad-f27b-400d-9b8f-c7fe628acb84" alt="Project Banner">
-</a>
+## 📱 Shopify Integration (Roadmap)
 
-#
+**Phase 1: Core Integration**
+- Customer authentication via Shopify
+- Product customization workflow
+- Design data persistence
+
+**Phase 2: E-commerce Features** 
+- Admin dashboard for store owners
+- Order management integration
+- Subscription billing system
+
+**Phase 3: Advanced Features**
+- Multi-product support (t-shirts, hoodies, etc.)
+- Bulk design operations
+- Analytics & reporting
+
+## 🔒 Security & Privacy
+
+- ✅ **Private Repository**: Intellectual property protection
+- ✅ **Environment Variables**: API keys stored securely  
+- ✅ **No Sensitive Data**: No credentials committed to Git
+- ✅ **CORS Configuration**: Controlled API access
+- ✅ **Local Storage**: User designs stored client-side
+
+## 📊 Project Status
+
+| Component | Status | Notes |
+|-----------|--------|--------|
+| 🎨 Canvas Designer | ✅ Production Ready | Full feature set complete |
+| 🤖 AI Integration | ✅ Production Ready | DALL-E integration working |
+| 📱 3D Preview | ✅ Production Ready | Real-time sync implemented |
+| 💾 Save/Load | ✅ Production Ready | Local storage working |
+| 🛍️ Shopify Integration | 🔄 Planned | Architecture ready |
+| 📱 Mobile Responsive | ✅ Production Ready | All screen sizes supported |
+
+## 🚀 Performance
+
+- **Canvas**: Optimized with Fabric.js for smooth drawing
+- **3D Rendering**: Three.js with performance monitoring  
+- **State Management**: Valtio for minimal re-renders
+- **API Calls**: Efficient caching and error handling
+- **Build Size**: Optimized with Vite tree-shaking
+
+## 📄 License
+
+**Private Project** - All rights reserved  
+© 2024 DesignNex Studio
+
+---
+
+**Version:** 1.0.0  
+**Last Updated:** July 2024  
+**Status:** 🚀 Production Ready
+
+<div align="center">
+  <strong>Built with ❤️ for creative product customization</strong>
+</div>
