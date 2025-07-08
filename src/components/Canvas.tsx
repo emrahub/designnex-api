@@ -59,7 +59,7 @@ const Canvas: React.FC<CanvasProps> = ({ canvasRef, onObjectSelected, isPreviewE
     const canvas = new fabric.Canvas(canvasElementRef.current, {
       width: 800,
       height: 600,
-      backgroundColor: 'transparent', // Transparent for 3D texture export
+      backgroundColor: '#ffffff', // White background for canvas display
       selection: true,
       preserveObjectStacking: true,
       renderOnAddRemove: true,
@@ -77,8 +77,19 @@ const Canvas: React.FC<CanvasProps> = ({ canvasRef, onObjectSelected, isPreviewE
     canvasRef.current = canvas;
     setCanvas(canvas);
 
-    // Initial render
+    // Initial render with forced timing
     canvas.renderAll();
+    
+    // Force additional render after DOM is ready
+    setTimeout(() => {
+      if (canvas && !canvas.isDisposed) {
+        canvas.renderAll();
+        console.log('🔄 Canvas forced render after initialization');
+        console.log('📊 Canvas dimensions:', canvas.width, 'x', canvas.height);
+        console.log('🎯 Canvas element:', canvas.getElement());
+        console.log('🌟 Canvas context:', canvas.contextTop);
+      }
+    }, 100);
     
     console.log('✅ DesignNex Canvas initialized successfully');
 
@@ -416,7 +427,7 @@ const Canvas: React.FC<CanvasProps> = ({ canvasRef, onObjectSelected, isPreviewE
       </div>
 
       {/* Right Side - Main Canvas - Always rendered, hidden with CSS when expanded */}
-      <div className={`${isPreviewExpanded ? 'hidden' : 'flex-1'} flex items-center justify-center transition-all duration-500`}>
+      <div className={`${isPreviewExpanded ? 'opacity-0 pointer-events-none absolute inset-0 z-0' : 'flex-1 relative z-10'} flex items-center justify-center transition-all duration-500`}>
         <div 
           ref={canvasContainerRef}
           className="relative border-2 border-gray-300 rounded-2xl transition-all duration-300 bg-white shadow-2xl"
@@ -445,7 +456,11 @@ const Canvas: React.FC<CanvasProps> = ({ canvasRef, onObjectSelected, isPreviewE
                 linear-gradient(-45deg, transparent 75%, #f8f8f8 75%)
               `,
               backgroundSize: '20px 20px',
-              backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
+              backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+              position: 'relative',
+              zIndex: 1,
+              display: 'block',
+              visibility: 'visible'
             }}
           />
           

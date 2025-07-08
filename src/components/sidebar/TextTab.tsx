@@ -64,11 +64,37 @@ const TextTab: React.FC<TextTabProps> = ({ selectedObject }) => {
     });
 
     console.log('🎨 Adding text object to canvas...');
+    console.log('📝 Text object properties:', {
+      text: textObject.text,
+      left: textObject.left,
+      top: textObject.top,
+      fontSize: textObject.fontSize,
+      fill: textObject.fill
+    });
     
     // Add object and force immediate sync
     canvas.add(textObject);
     canvas.setActiveObject(textObject);
+    
+    console.log('📊 Canvas objects after add:', canvas.getObjects().length);
+    console.log('✅ Active object:', canvas.getActiveObject());
+    
+    // Ensure rendering with multiple render calls for visibility
     canvas.renderAll();
+    
+    requestAnimationFrame(() => {
+      if (canvas && !canvas.isDisposed) {
+        canvas.renderAll();
+        
+        // Additional render after 100ms to ensure visibility
+        setTimeout(() => {
+          if (canvas && !canvas.isDisposed) {
+            canvas.renderAll();
+            console.log('🎨 Text object final render completed');
+          }
+        }, 100);
+      }
+    });
     
     // Ensure unified state has current canvas
     unifiedState.canvas = canvas;

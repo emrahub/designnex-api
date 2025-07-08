@@ -45,7 +45,23 @@ const UploadTab: React.FC<UploadTabProps> = () => {
 
         canvas.add(img);
         canvas.setActiveObject(img);
+        
+        // Ensure rendering with multiple render calls for visibility
         canvas.renderAll();
+        
+        requestAnimationFrame(() => {
+          if (canvas && !canvas.isDisposed) {
+            canvas.renderAll();
+            
+            // Additional render after 100ms to ensure visibility
+            setTimeout(() => {
+              if (canvas && !canvas.isDisposed) {
+                canvas.renderAll();
+                console.log('🖼️ Image object final render completed');
+              }
+            }, 100);
+          }
+        });
         
         // Ensure unified state has current canvas
         unifiedState.canvas = canvas;

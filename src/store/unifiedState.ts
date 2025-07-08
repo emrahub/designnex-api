@@ -192,14 +192,35 @@ export const unifiedState = proxy<UnifiedState>({
     console.log('🔍 Sync complete!');
   },
   
-  // Export canvas as texture
+  // Export canvas as texture with transparent background for 3D
   exportCanvasAsTexture() {
     if (this.canvas && !this.canvas.isDisposed) {
       try {
+        // Save current background
+        const originalBg = this.canvas.backgroundColor;
+        
+        // Set transparent background for 3D export
+        this.canvas.setBackgroundColor('transparent', () => {
+          // Export with transparent background
+          const dataURL = this.canvas.toDataURL({
+            format: 'png',
+            quality: 1,
+            multiplier: 2 // Higher resolution for better quality
+          });
+          
+          // Restore original background
+          this.canvas.setBackgroundColor(originalBg, () => {
+            this.canvas.renderAll();
+          });
+          
+          return dataURL;
+        });
+        
+        // Return the export (this will be called in the callback)
         return this.canvas.toDataURL({
           format: 'png',
           quality: 1,
-          multiplier: 2 // Higher resolution for better quality
+          multiplier: 2
         });
       } catch (error) {
         console.error('❌ Canvas export error:', error);
