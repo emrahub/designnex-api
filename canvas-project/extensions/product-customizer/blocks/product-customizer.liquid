@@ -1,0 +1,99 @@
+<div id="designer-root" 
+     data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+     data-product-id="{{ product.id }}"
+     data-product-title="{{ product.title | escape }}"
+     data-variant-price="{{ product.selected_or_first_available_variant.price | money_without_currency }}"
+     data-currency="{{ shop.currency }}">
+</div>
+
+<link rel="stylesheet" href="{{ 'customizer.css' | asset_url }}">
+<script defer src="{{ 'product-customizer.bundle.js' | asset_url }}"></script>
+
+{% schema %}
+{
+  "name": "Product Customizer",
+  "tag": "section",
+  "class": "product-customizer-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Customize Your Product"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Create your unique design with our professional customization tools"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Show Section Heading",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "canvas_size",
+      "label": "Canvas Size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small (600x450)"
+        },
+        {
+          "value": "medium",
+          "label": "Medium (800x600)"
+        },
+        {
+          "value": "large",
+          "label": "Large (1000x750)"
+        }
+      ],
+      "default": "medium"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "design_category",
+      "name": "Design Category",
+      "settings": [
+        {
+          "type": "text",
+          "id": "category_name",
+          "label": "Category Name",
+          "default": "Popular Designs"
+        },
+        {
+          "type": "textarea",
+          "id": "design_list",
+          "label": "Design List (JSON)",
+          "info": "Enter designs in JSON format",
+          "default": "[{\"id\":1,\"name\":\"Mountain Logo\",\"category\":\"Nature\",\"preview\":\"🏔️\"}]"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Customizer",
+      "category": "Product",
+      "settings": {
+        "heading": "Customize Your Product",
+        "show_heading": true,
+        "canvas_size": "medium"
+      }
+    }
+  ]
+}
+{% endschema %}
+
+{% if section.settings.show_heading %}
+<div class="customizer-header">
+  <h2 class="customizer-heading">{{ section.settings.heading }}</h2>
+  {% if section.settings.description != blank %}
+    <p class="customizer-description">{{ section.settings.description }}</p>
+  {% endif %}
+</div>
+{% endif %}
