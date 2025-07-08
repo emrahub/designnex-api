@@ -9,7 +9,7 @@
   
   const DESIGNNEX_CONFIG = {
     STUDIO_URL: 'https://designnex-studio.vercel.app',
-    API_URL: 'https://designnex-api.railway.app',
+    API_URL: 'https://designnex-api-production.railway.app',
     VERSION: '1.0.0'
   };
 
