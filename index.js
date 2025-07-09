@@ -15,10 +15,33 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+// Middleware
+// Configure CORS allowed origins via environment variable for flexibility
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+  'https://designnex-studio.vercel.app',
+  'https://canvas-project-emrahub-emrahs-projects-cc1a353c.vercel.app',
+  'https://canvas-project-umber.vercel.app',
+  'https://canvas-project-c8hufcuqt-emrahs-projects-cc1a353c.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+// Enable CORS for preflight and actual requests
 app.use(cors({
-  origin: ['https://designnex-studio.vercel.app', 'https://canvas-project-emrahub-emrahs-projects-cc1a353c.vercel.app', 'http://localhost:5173', 'http://localhost:3000'],
-  credentials: true
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  maxAge: 86400
 }));
+// Handle CORS preflight requests
+app.options('*', cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  maxAge: 86400
+}));
+
 app.use(express.json({ limit: '50mb' }));
 
 // Health check endpoint
@@ -124,8 +147,8 @@ app.use((error, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 DesignNex API Backend running on port ${PORT}`);
-  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
-  console.log(`🎨 DALL-E API: http://localhost:${PORT}/api/v1/dalle`);
+  console.log('🔗 Health check: http://localhost:${PORT}/health');
+  console.log('🎨 DALL-E API: http://localhost:${PORT}/api/v1/dalle');
 });
 
 export default app;

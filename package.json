@@ -1,15 +1,21 @@
 {
-  "name": "designnex-api",
+  "name": "designnex-api-backend",
   "version": "1.0.0",
-  "type": "module",
-  "description": "DesignNex API Backend",
+  "description": "DesignNex API Backend for Railway",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
     "build": "echo 'No build needed'"
   },
-  "keywords": ["designnex", "api", "dalle", "tshirt-customizer"],
+  "keywords": [
+    "shopify",
+    "product-customizer",
+    "3d",
+    "canvas",
+    "api"
+  ],
   "author": "DesignNex Studio",
   "license": "MIT",
   "dependencies": {
