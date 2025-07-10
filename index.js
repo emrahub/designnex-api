@@ -29,6 +29,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
 // Handle CORS preflight requests
 app.options('*', cors({
   origin: allowedOrigins,
