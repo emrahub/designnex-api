@@ -16,22 +16,18 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 // Middleware
-// Configure CORS allowed origins via environment variable for flexibility
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+// Configure CORS allowed origins for production
+const allowedOrigins = [
   'https://designnex-studio.vercel.app',
-  'https://canvas-project-emrahub-emrahs-projects-cc1a353c.vercel.app',
-  'https://canvas-project-umber.vercel.app',
-  'https://canvas-project-c8hufcuqt-emrahs-projects-cc1a353c.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:3000'
+  'https://canvas-project-9vrmkghwx-emrahs-projects-cc1a353c.vercel.app',
+  'https://admin.shopify.com'
 ];
 // Enable CORS for preflight and actual requests
 app.use(cors({
   origin: allowedOrigins,
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-  maxAge: 86400
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 // Handle CORS preflight requests
 app.options('*', cors({
