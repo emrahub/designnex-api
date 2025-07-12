@@ -11,24 +11,37 @@
 :root {
   /* Shopify Colors */
   --shopify-primary: #00848e;
+  --shopify-primary-hover: #006d75;
+  --shopify-primary-light: rgba(0, 132, 142, 0.1);
   --shopify-secondary: #bf0711;
   --shopify-success: #008060;
+  --shopify-success-light: rgba(0, 128, 96, 0.1);
   --shopify-warning: #ffc453;
+  --shopify-warning-light: rgba(255, 196, 83, 0.1);
   --shopify-error: #d72c0d;
+  --shopify-error-light: rgba(215, 44, 13, 0.1);
   --shopify-info: #006fbb;
+  --shopify-info-light: rgba(0, 111, 187, 0.1);
   
-  /* Neutral Colors */
+  /* Neutral Colors - Shopify Style */
   --neutral-0: #ffffff;
-  --neutral-50: #fafbfb;
-  --neutral-100: #f6f6f7;
-  --neutral-200: #f1f2f3;
-  --neutral-300: #e1e3e5;
-  --neutral-400: #c9cccf;
-  --neutral-500: #a7acb1;
+  --neutral-25: #fcfcfd;
+  --neutral-50: #f9fafb;
+  --neutral-100: #f4f6f8;
+  --neutral-200: #e1e3e5;
+  --neutral-300: #d2d5d8;
+  --neutral-400: #b5bac0;
+  --neutral-500: #8c9196;
   --neutral-600: #6d7175;
   --neutral-700: #303030;
   --neutral-800: #1a1a1a;
   --neutral-900: #000000;
+  
+  /* Surface Colors */
+  --surface-primary: var(--neutral-0);
+  --surface-secondary: var(--neutral-50);
+  --surface-tertiary: var(--neutral-100);
+  --surface-disabled: var(--neutral-200);
   
   /* Typography */
   --font-family: "Inter", "Shopify Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -58,10 +71,13 @@
   --shadow-md: 0 0 0 1px rgba(0, 0, 0, 0.07), 0 2px 8px rgba(0, 0, 0, 0.20);
   --shadow-lg: 0 0 0 1px rgba(0, 0, 0, 0.07), 0 8px 16px rgba(0, 0, 0, 0.15);
   
-  /* Border Radius */
+  /* Border Radius - Shopify Scale */
+  --radius-sm: 0.25rem;     /* 4px */
   --radius-base: 0.375rem;  /* 6px */
-  --radius-lg: 0.5rem;      /* 8px */
-  --radius-xl: 0.75rem;     /* 12px */
+  --radius-md: 0.5rem;      /* 8px */
+  --radius-lg: 0.75rem;     /* 12px */
+  --radius-xl: 1rem;        /* 16px */
+  --radius-full: 9999px;    /* Fully rounded */
   
   /* Transitions */
   --transition-fast: 100ms ease;
@@ -80,6 +96,38 @@
   --sidebar-width-collapsed: 72px;
   --header-height: 64px;
   --mobile-header-height: 64px;
+}
+
+/* Accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: var(--space-4);
+  background: var(--shopify-primary);
+  color: var(--neutral-0);
+  padding: var(--space-2) var(--space-4);
+  text-decoration: none;
+  border-radius: var(--radius-base);
+  font-weight: 600;
+  z-index: 1000;
+  transition: top var(--transition-base);
+}
+
+.skip-link:focus {
+  top: var(--space-4);
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Typography */
@@ -221,9 +269,9 @@ body {
 /* Sidebar Header */
 .sidebar-header {
   padding: var(--space-6) var(--space-4);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  color: var(--neutral-0);
+  border-bottom: 1px solid var(--neutral-200);
+  background: var(--neutral-0);
+  color: var(--neutral-700);
   position: relative;
 }
 
@@ -236,25 +284,22 @@ body {
 .brand-logo {
   width: 42px;
   height: 42px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--shopify-primary);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   color: var(--neutral-0);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
   cursor: pointer;
 }
 
 .brand-logo:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: #006d75;
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .brand-logo i {
@@ -275,10 +320,9 @@ body {
   margin: 0;
   line-height: 1.1;
   letter-spacing: -0.02em;
-  color: var(--neutral-0);
+  color: var(--neutral-900);
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   text-transform: none;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .brand-status {
@@ -291,32 +335,31 @@ body {
 .status-dot {
   width: 8px;
   height: 8px;
-  background: #00ff88;
+  background: var(--shopify-success);
   border-radius: 50%;
   animation: pulse 2s infinite;
-  box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+  box-shadow: 0 0 0 0 rgba(0, 128, 96, 0.7);
 }
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+    box-shadow: 0 0 0 0 rgba(0, 128, 96, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 6px rgba(0, 255, 136, 0);
+    box-shadow: 0 0 0 6px rgba(0, 128, 96, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+    box-shadow: 0 0 0 0 rgba(0, 128, 96, 0);
   }
 }
 
 .brand-subtitle {
   font-size: var(--font-size-xs);
-  opacity: 0.85;
   margin: 0;
-  font-weight: 400;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--neutral-500);
   font-family: 'Inter', system-ui, sans-serif;
 }
 
@@ -325,25 +368,23 @@ body {
   right: var(--space-4);
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--neutral-0);
+  background: var(--neutral-100);
+  border: 1px solid var(--neutral-200);
+  color: var(--neutral-600);
   cursor: pointer;
   padding: var(--space-2);
   border-radius: var(--radius-base);
-  opacity: 0.8;
   transition: all var(--transition-base);
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(10px);
 }
 
 .sidebar-toggle:hover {
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--neutral-200);
+  color: var(--neutral-700);
   transform: translateY(-50%) scale(1.05);
 }
 
@@ -463,24 +504,52 @@ body {
 
 /* Page Header */
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
   margin-bottom: var(--space-8);
-  gap: var(--space-4);
 }
 
 .page-title {
-  font-size: var(--font-size-2xl);
-  font-weight: 600;
-  color: var(--neutral-700);
-  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--neutral-900);
+  margin: 0 0 var(--space-1) 0;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
 }
 
 .page-subtitle {
   font-size: var(--font-size-base);
   color: var(--neutral-600);
-  margin-top: var(--space-1);
+  margin: 0 0 var(--space-6) 0;
+  line-height: 1.5;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.breadcrumb-item {
+  color: var(--neutral-600);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+.breadcrumb-item:hover {
+  color: var(--shopify-primary);
+}
+
+.breadcrumb-item.current {
+  color: var(--neutral-900);
+  font-weight: 500;
+}
+
+.breadcrumb-separator {
+  color: var(--neutral-400);
+  margin: 0 var(--space-1);
 }
 
 .page-actions {
@@ -488,6 +557,7 @@ body {
   align-items: center;
   gap: var(--space-3);
   flex-wrap: wrap;
+  margin-top: var(--space-6);
 }
 
 /* Content Sections */
@@ -591,7 +661,7 @@ body {
   color: var(--neutral-500);
 }
 
-/* Buttons */
+/* Shopify Button System */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -601,39 +671,121 @@ body {
   border-radius: var(--radius-base);
   font-size: var(--font-size-sm);
   font-weight: 500;
+  font-family: inherit;
+  line-height: 1.4;
   text-decoration: none;
   border: 1px solid transparent;
   cursor: pointer;
   transition: all var(--transition-base);
-  min-height: 44px; /* Touch-friendly */
+  min-height: 44px;
   white-space: nowrap;
+  position: relative;
+  outline: none;
 }
 
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
+.btn:focus-visible {
+  box-shadow: 0 0 0 3px var(--shopify-primary-light);
+  outline: none;
+}
+
+/* Loading state */
+.btn.loading {
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Primary Button */
 .btn-primary {
   background: var(--shopify-primary);
   color: var(--neutral-0);
   border-color: var(--shopify-primary);
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #006d75;
-  border-color: #006d75;
+  background: var(--shopify-primary-hover);
+  border-color: var(--shopify-primary-hover);
+  box-shadow: 0 2px 4px 0 rgba(0, 132, 142, 0.3);
 }
 
+.btn-primary:active:not(:disabled) {
+  background: #005a61;
+  border-color: #005a61;
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  transform: translateY(1px);
+}
+
+/* Secondary Button */
 .btn-secondary {
   background: var(--neutral-0);
   color: var(--neutral-700);
   border-color: var(--neutral-300);
+  box-shadow: 0 1px 0 0 rgba(22, 29, 37, 0.05);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--neutral-100);
+  background: var(--neutral-50);
   border-color: var(--neutral-400);
+  color: var(--neutral-800);
+}
+
+.btn-secondary:active:not(:disabled) {
+  background: var(--neutral-100);
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  transform: translateY(1px);
+}
+
+/* Outline Button */
+.btn-outline {
+  background: transparent;
+  color: var(--shopify-primary);
+  border-color: var(--shopify-primary);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--shopify-primary-light);
+  color: var(--shopify-primary);
+}
+
+/* Ghost Button */
+.btn-ghost {
+  background: transparent;
+  color: var(--neutral-700);
+  border-color: transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--neutral-100);
+  color: var(--neutral-800);
+}
+
+/* Destructive Button */
+.btn-destructive {
+  background: var(--shopify-error);
+  color: var(--neutral-0);
+  border-color: var(--shopify-error);
+}
+
+.btn-destructive:hover:not(:disabled) {
+  background: #c02717;
+  border-color: #c02717;
 }
 
 .btn-success {
@@ -658,16 +810,51 @@ body {
   border-color: #bf0711;
 }
 
+/* Button Sizes */
+.btn-xs {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-size-xs);
+  min-height: 28px;
+  gap: var(--space-1);
+}
+
 .btn-sm {
   padding: var(--space-2) var(--space-3);
   font-size: var(--font-size-xs);
   min-height: 36px;
+  gap: var(--space-1);
+}
+
+.btn-md {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  min-height: 44px;
+  gap: var(--space-2);
 }
 
 .btn-lg {
   padding: var(--space-4) var(--space-6);
   font-size: var(--font-size-base);
   min-height: 52px;
+  gap: var(--space-2);
+}
+
+/* Full width button */
+.btn-full {
+  width: 100%;
+}
+
+/* Icon-only buttons */
+.btn-icon {
+  padding: var(--space-3);
+  width: 44px;
+  min-width: 44px;
+}
+
+.btn-icon.btn-sm {
+  padding: var(--space-2);
+  width: 36px;
+  min-width: 36px;
 }
 
 /* Form Elements */
@@ -709,21 +896,56 @@ body {
   min-height: 80px;
 }
 
-/* Tables */
+/* Shopify-style Tables */
 .data-table {
   background: var(--neutral-0);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   border: 1px solid var(--neutral-200);
   overflow: hidden;
   margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--neutral-200);
+  vertical-align: middle;
+}
+
+.data-table th {
+  background: var(--neutral-50);
+  font-weight: 600;
+  color: var(--neutral-700);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.data-table tbody tr:hover {
+  background: var(--neutral-25);
+}
+
+.data-table tbody tr:last-child th,
+.data-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .table-header {
-  background: var(--neutral-100);
+  background: var(--neutral-50);
   border-bottom: 1px solid var(--neutral-200);
   font-weight: 600;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   color: var(--neutral-700);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .table-row {
@@ -740,7 +962,7 @@ body {
 }
 
 .table-row:hover {
-  background: var(--neutral-50);
+  background: var(--neutral-25);
 }
 
 .table-cell {
@@ -880,15 +1102,55 @@ body {
   margin-top: var(--space-4);
 }
 
-/* Loading States */
-.loading-skeleton {
-  background: linear-gradient(90deg, var(--neutral-200) 25%, var(--neutral-100) 50%, var(--neutral-200) 75%);
+/* Shopify-style Loading States */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--neutral-200) 25%,
+    var(--neutral-100) 50%,
+    var(--neutral-200) 75%
+  );
   background-size: 200% 100%;
-  animation: loading 1.5s infinite;
+  animation: shimmer 1.5s infinite;
   border-radius: var(--radius-base);
 }
 
-@keyframes loading {
+.skeleton-text {
+  height: 1em;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-text.large {
+  height: 1.5em;
+}
+
+.skeleton-text.small {
+  height: 0.75em;
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+}
+
+.skeleton-card {
+  height: 120px;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-table-row {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.skeleton-table-cell {
+  height: 1em;
+  flex: 1;
+}
+
+@keyframes shimmer {
   0% {
     background-position: 200% 0;
   }
@@ -1184,30 +1446,74 @@ body {
 }
 
 /* Mobile notification adjustments */
+/* Enhanced Mobile Experience */
 @media (max-width: 640px) {
   .notification {
-    top: 70px; /* Below mobile header */
+    top: 70px;
     right: var(--space-4);
     left: var(--space-4);
     min-width: auto;
     max-width: none;
   }
   
-  /* Improve mobile button interactions */
+  /* Mobile touch targets */
   .btn {
     min-height: 48px;
-    padding: var(--space-3) var(--space-5);
+    padding: var(--space-4) var(--space-5);
     font-size: var(--font-size-base);
+    font-weight: 600;
   }
   
   .nav-item {
-    min-height: 52px;
-    padding: var(--space-4) var(--space-4);
+    min-height: 56px;
+    padding: var(--space-4);
+    border-radius: 0;
   }
   
   .mobile-menu-button {
     min-width: 48px;
     min-height: 48px;
+    border-radius: var(--radius-md);
+  }
+  
+  /* Mobile-optimized forms */
+  .form-input,
+  .form-select {
+    min-height: 48px;
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: var(--space-4);
+  }
+  
+  /* Mobile cards */
+  .stat-card {
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+  }
+  
+  /* Mobile tables */
+  .data-table th,
+  .data-table td {
+    padding: var(--space-3);
+  }
+  
+  /* Pull to refresh indicator */
+  .mobile-refresh-indicator {
+    position: fixed;
+    top: var(--mobile-header-height);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--shopify-primary);
+    color: var(--neutral-0);
+    padding: var(--space-2) var(--space-4);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    font-size: var(--font-size-sm);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+  }
+  
+  .mobile-refresh-indicator.active {
+    opacity: 1;
   }
 }
 

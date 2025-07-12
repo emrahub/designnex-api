@@ -22,6 +22,8 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 </head>
 <body>
+    <!-- Skip Navigation Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <!-- Mobile Header -->
     <header class="mobile-header">
         <button class="mobile-menu-button" onclick="toggleMobileSidebar()" aria-label="Toggle menu">
@@ -60,17 +62,17 @@
                 </button>
             </div>
             
-            <nav class="sidebar-nav" role="navigation">
-                <a href="#" class="nav-item active" data-section="dashboard" onclick="showSection('dashboard', this)">
-                    <i class="fas fa-chart-pie"></i>
+            <nav class="sidebar-nav" role="navigation" aria-label="Main navigation">
+                <a href="#" class="nav-item active" data-section="dashboard" onclick="showSection('dashboard', this)" aria-current="page" aria-label="Dashboard overview">
+                    <i class="fas fa-chart-pie" aria-hidden="true"></i>
                     <span class="nav-text">Dashboard</span>
                 </a>
-                <a href="#" class="nav-item" data-section="orders" onclick="showSection('orders', this)">
-                    <i class="fas fa-shopping-cart"></i>
+                <a href="#" class="nav-item" data-section="orders" onclick="showSection('orders', this)" aria-label="Order management">
+                    <i class="fas fa-shopping-cart" aria-hidden="true"></i>
                     <span class="nav-text">Orders</span>
                 </a>
-                <a href="#" class="nav-item" data-section="designs" onclick="showSection('designs', this)">
-                    <i class="fas fa-paint-brush"></i>
+                <a href="#" class="nav-item" data-section="designs" onclick="showSection('designs', this)" aria-label="Customer designs management">
+                    <i class="fas fa-paint-brush" aria-hidden="true"></i>
                     <span class="nav-text">Customer Designs</span>
                 </a>
                 <a href="#" class="nav-item" data-section="customers" onclick="showSection('customers', this)">
@@ -104,16 +106,19 @@
         </aside>
         
         <!-- Main Content -->
-        <main class="main-content" id="mainContent">
+        <main class="main-content" id="mainContent" role="main" aria-label="Main content area">
             <div class="content-wrapper">
                 
                 <!-- Dashboard Section -->
                 <section id="dashboard" class="content-section active">
                     <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Dashboard Overview</h1>
-                            <p class="page-subtitle">Monitor your stores performance and activity</p>
-                        </div>
+                        <nav class="breadcrumb" aria-label="Breadcrumb">
+                            <a href="#" class="breadcrumb-item">Home</a>
+                            <span class="breadcrumb-separator">/</span>
+                            <span class="breadcrumb-item current">Dashboard</span>
+                        </nav>
+                        <h1 class="page-title">Dashboard Overview</h1>
+                        <p class="page-subtitle">Monitor your stores performance and activity</p>
                         <div class="page-actions">
                             <select id="storeFilter" class="form-select" onchange="filterByStore(this.value)">
                                 <option value="">All Stores</option>
@@ -239,10 +244,13 @@
                 <!-- Orders Section -->
                 <section id="orders" class="content-section">
                     <div class="page-header">
-                        <div>
-                            <h1 class="page-title">Order Management</h1>
-                            <p class="page-subtitle">Track and manage all custom product orders</p>
-                        </div>
+                        <nav class="breadcrumb" aria-label="Breadcrumb">
+                            <a href="#" class="breadcrumb-item">Home</a>
+                            <span class="breadcrumb-separator">/</span>
+                            <span class="breadcrumb-item current">Orders</span>
+                        </nav>
+                        <h1 class="page-title">Order Management</h1>
+                        <p class="page-subtitle">Track and manage all custom product orders</p>
                         <div class="page-actions">
                             <select id="orderStatusFilter" class="form-select" onchange="filterOrders(this.value)">
                                 <option value="">All Status</option>
