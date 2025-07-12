@@ -37,8 +37,8 @@ router.route('/').post(async (req, res) => {
     let modelUsed;
     let enhancedPrompt;
 
-    // Enhanced prompt for t-shirt design optimization
-    enhancedPrompt = `${prompt}, professional t-shirt design, clean vector style, high contrast, suitable for printing, no background elements`;
+    // Enhanced prompt for clean design generation
+    enhancedPrompt = `${prompt}, clean vector style, high contrast, no background elements`;
     
     if (background === 'transparent') {
       enhancedPrompt += ', transparent background, isolated design';
