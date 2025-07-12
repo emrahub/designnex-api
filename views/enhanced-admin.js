@@ -22,9 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeDashboard() {
     console.log('🚀 Initializing DesignNex Admin Dashboard');
     
-    // Check if we're on mobile
+    // Check if we're on mobile and set initial state
+    const sidebar = document.getElementById('sidebar');
     if (window.innerWidth <= mobileBreakpoint) {
-        document.getElementById('sidebar').classList.add('mobile-hidden');
+        sidebar.classList.add('mobile-hidden');
+        sidebar.classList.remove('mobile-visible');
+        console.log('📱 Mobile mode detected - sidebar hidden');
+    } else {
+        sidebar.classList.remove('mobile-hidden', 'mobile-visible');
+        console.log('🖥️ Desktop mode detected');
     }
     
     // Load user preferences
@@ -156,7 +162,9 @@ function toggleMobileSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.querySelector('.sidebar-overlay');
     
-    if (sidebar.classList.contains('mobile-hidden')) {
+    console.log('🔄 Toggling mobile sidebar');
+    
+    if (sidebar.classList.contains('mobile-hidden') || !sidebar.classList.contains('mobile-visible')) {
         openMobileSidebar();
     } else {
         closeMobileSidebar();
@@ -167,7 +175,10 @@ function openMobileSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.querySelector('.sidebar-overlay');
     
+    console.log('📱 Opening mobile sidebar');
+    
     sidebar.classList.remove('mobile-hidden');
+    sidebar.classList.add('mobile-visible');
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -176,7 +187,10 @@ function closeMobileSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.querySelector('.sidebar-overlay');
     
+    console.log('📱 Closing mobile sidebar');
+    
     sidebar.classList.add('mobile-hidden');
+    sidebar.classList.remove('mobile-visible');
     overlay.classList.remove('active');
     document.body.style.overflow = '';
 }
@@ -786,15 +800,17 @@ function handleResize() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
         
-        sidebar.classList.remove('mobile-hidden');
+        sidebar.classList.remove('mobile-hidden', 'mobile-visible');
         overlay.classList.remove('active');
         document.body.style.overflow = '';
+        console.log('🖥️ Switched to desktop mode');
     } else {
         // Mobile view
         const sidebar = document.getElementById('sidebar');
         if (!sidebar.classList.contains('mobile-hidden')) {
             closeMobileSidebar();
         }
+        console.log('📱 Switched to mobile mode');
     }
     
     // Resize charts

@@ -79,7 +79,7 @@
   --sidebar-width: 280px;
   --sidebar-width-collapsed: 72px;
   --header-height: 64px;
-  --mobile-header-height: 56px;
+  --mobile-header-height: 64px;
 }
 
 /* Typography */
@@ -115,21 +115,39 @@ body {
   padding: 0 var(--space-4);
   align-items: center;
   justify-content: space-between;
+  box-shadow: var(--shadow-sm);
 }
 
 .mobile-menu-button {
   background: none;
   border: none;
-  padding: var(--space-2);
+  padding: var(--space-3);
   border-radius: var(--radius-base);
   color: var(--neutral-600);
   cursor: pointer;
   transition: all var(--transition-base);
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  position: relative;
 }
 
 .mobile-menu-button:hover {
   background: var(--neutral-100);
   color: var(--neutral-700);
+}
+
+.mobile-menu-button:active {
+  background: var(--neutral-200);
+  transform: scale(0.95);
+}
+
+.mobile-menu-button i {
+  font-size: 18px;
+  line-height: 1;
 }
 
 .mobile-brand {
@@ -182,10 +200,13 @@ body {
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 30;
+  transition: opacity var(--transition-base);
+  opacity: 0;
 }
 
 .sidebar-overlay.active {
   display: block;
+  opacity: 1;
 }
 
 /* Sidebar Header */
@@ -324,12 +345,18 @@ body {
   transition: all var(--transition-base);
   border-left: 3px solid transparent;
   position: relative;
-  min-height: 44px; /* Touch-friendly */
+  min-height: 48px;
+  touch-action: manipulation;
 }
 
 .nav-item:hover {
   background: var(--neutral-100);
   color: var(--neutral-700);
+}
+
+.nav-item:active {
+  background: var(--neutral-200);
+  transform: scale(0.98);
 }
 
 .nav-item.active {
@@ -974,10 +1001,15 @@ body {
   
   .sidebar {
     transform: translateX(-100%);
+    transition: transform var(--transition-base);
   }
   
   .sidebar.mobile-visible {
     transform: translateX(0);
+  }
+  
+  .sidebar.mobile-hidden {
+    transform: translateX(-100%);
   }
   
   .main-content {
@@ -1141,6 +1173,23 @@ body {
     left: var(--space-4);
     min-width: auto;
     max-width: none;
+  }
+  
+  /* Improve mobile button interactions */
+  .btn {
+    min-height: 48px;
+    padding: var(--space-3) var(--space-5);
+    font-size: var(--font-size-base);
+  }
+  
+  .nav-item {
+    min-height: 52px;
+    padding: var(--space-4) var(--space-4);
+  }
+  
+  .mobile-menu-button {
+    min-width: 48px;
+    min-height: 48px;
   }
 }
 
