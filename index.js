@@ -2,9 +2,21 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Import admin functionality
+import { initDB } from './database/init.js';
+import adminRoutes from './routes/admin.routes.js';
+import { trackAPIUsage } from './middleware/admin-auth.js';
 
 // Load environment variables
 dotenv.config();
+
+// ES module __dirname alternative
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Initialize OpenAI
 const openai = new OpenAI({
@@ -40,6 +52,10 @@ app.options('*', cors({
 }));
 
 app.use(express.json({ limit: '50mb' }));
+app.use(cookieParser());
+
+// API usage tracking middleware
+app.use(trackAPIUsage);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -118,6 +134,25 @@ app.post('/api/v1/dalle', async (req, res) => {
   }
 });
 
+// Admin routes
+app.use('/api/admin', adminRoutes);
+
+// Serve admin static files
+app.use('/admin', express.static(path.join(__dirname, 'views')));
+
+// Admin login page
+app.get('/admin', (req, res) => {
+  res.redirect('/admin/login');
+});
+
+app.get('/admin/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'admin-login.html'));
+});
+
+app.get('/admin/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html'));
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
@@ -127,7 +162,9 @@ app.use('*', (req, res) => {
     availableEndpoints: {
       health: 'GET /health',
       root: 'GET /',
-      dalle: 'POST /api/v1/dalle'
+      dalle: 'POST /api/v1/dalle',
+      admin: 'GET /admin',
+      adminAPI: 'GET /api/admin/*'
     }
   });
 });
@@ -142,10 +179,19 @@ app.use((error, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 DesignNex API Backend running on port ${PORT}`);
-  console.log('🔗 Health check: http://localhost:${PORT}/health');
-  console.log('🎨 DALL-E API: http://localhost:${PORT}/api/v1/dalle');
+  console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  console.log(`🎨 DALL-E API: http://localhost:${PORT}/api/v1/dalle`);
+  console.log(`👤 Admin Panel: http://localhost:${PORT}/admin`);
+  
+  // Initialize database
+  try {
+    await initDB();
+    console.log('✅ Admin panel ready');
+  } catch (error) {
+    console.error('❌ Database initialization failed:', error);
+  }
 });
 
 export default app;

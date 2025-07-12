@@ -1,6 +1,7 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
 import OpenAI from 'openai';
+import { dbHelpers } from '../database/init.js';
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ router.route('/').get((req, res) => {
 
 // Enhanced image generation with 2025 OpenAI features
 router.route('/').post(async (req, res) => {
+  const startTime = Date.now();
+  
   try {
     const { 
       prompt, 
@@ -32,6 +35,16 @@ router.route('/').post(async (req, res) => {
     } = req.body;
 
     console.log('🎨 Image generation request:', { prompt, size, quality, style, background, model_preference });
+    
+    // Log request start
+    await dbHelpers.logSystem(
+      'info',
+      `AI generation started: "${prompt.substring(0, 50)}..."`,
+      '/api/v1/dalle',
+      'POST',
+      req.ip,
+      req.get('User-Agent')
+    );
 
     let response;
     let modelUsed;
@@ -83,6 +96,20 @@ router.route('/').post(async (req, res) => {
           modelUsed = 'gpt-image-1';
           console.log('✅ GPT Image generation successful');
           
+          // Log successful generation
+          const responseTime = Date.now() - startTime;
+          await dbHelpers.logAIGeneration({
+            prompt,
+            modelUsed,
+            responseTime,
+            success: true,
+            errorMessage: null,
+            imageSize: size,
+            quality,
+            style,
+            ipAddress: req.ip
+          });
+          
           return res.status(200).json({ 
             photo: imageData.image,
             model_used: modelUsed,
@@ -122,6 +149,20 @@ router.route('/').post(async (req, res) => {
       
       console.log('✅ DALL-E 3 generation successful');
       
+      // Log successful generation
+      const responseTime = Date.now() - startTime;
+      await dbHelpers.logAIGeneration({
+        prompt,
+        modelUsed,
+        responseTime,
+        success: true,
+        errorMessage: null,
+        imageSize: size,
+        quality,
+        style,
+        ipAddress: req.ip
+      });
+      
       return res.status(200).json({ 
         photo: image,
         model_used: modelUsed,
@@ -154,6 +195,20 @@ router.route('/').post(async (req, res) => {
       
       console.log('✅ DALL-E 2 fallback successful');
       
+      // Log successful generation
+      const responseTime = Date.now() - startTime;
+      await dbHelpers.logAIGeneration({
+        prompt,
+        modelUsed,
+        responseTime,
+        success: true,
+        errorMessage: null,
+        imageSize: size,
+        quality: 'standard',
+        style,
+        ipAddress: req.ip
+      });
+      
       return res.status(200).json({ 
         photo: image,
         model_used: modelUsed,
@@ -171,6 +226,31 @@ router.route('/').post(async (req, res) => {
 
   } catch (error) {
     console.error('❌ Image Generation Error:', error.response?.data || error.message);
+    
+    // Log failed generation
+    const responseTime = Date.now() - startTime;
+    await dbHelpers.logAIGeneration({
+      prompt: req.body.prompt || 'unknown',
+      modelUsed: 'failed',
+      responseTime,
+      success: false,
+      errorMessage: error.message,
+      imageSize: req.body.size || 'unknown',
+      quality: req.body.quality || 'unknown',
+      style: req.body.style || 'unknown',
+      ipAddress: req.ip
+    }).catch(console.error);
+    
+    // Log system error
+    await dbHelpers.logSystem(
+      'error',
+      `AI generation failed: ${error.message}`,
+      '/api/v1/dalle',
+      'POST',
+      req.ip,
+      req.get('User-Agent')
+    ).catch(console.error);
+    
     res.status(500).json({ 
       message: error.message || "Image generation failed",
       error_type: error.code || 'unknown',
