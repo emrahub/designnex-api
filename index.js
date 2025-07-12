@@ -91,7 +91,7 @@ app.post('/api/v1/dalle', async (req, res) => {
 
     const response = await openai.images.generate({
       model: 'dall-e-2',
-      prompt: `A T-shirt logo design: ${prompt}, clean background, suitable for printing`,
+      prompt: `${prompt}, clean background, high quality`,
       n: 1,
       size: '1024x1024',
       response_format: 'b64_json'
