@@ -9,6 +9,8 @@ import { fileURLToPath } from 'url';
 // Import admin functionality
 import { initDB } from './database/init.js';
 import adminRoutes from './routes/admin.routes.js';
+import storeRoutes from './routes/store.routes.js';
+import dalleRoutes from './routes/dalle.routes.js';
 import { trackAPIUsage } from './middleware/admin-auth.js';
 
 // Load environment variables
@@ -75,67 +77,21 @@ app.get('/', (req, res) => {
     description: 'Backend API for DesignNex Studio',
     endpoints: {
       health: '/health',
-      dalle: '/api/v1/dalle'
+      dalle: '/api/v1/dalle',
+      admin: '/admin',
+      store: '/store/dashboard'
     }
   });
 });
 
-// DALL-E API endpoint
-app.get('/api/v1/dalle', (req, res) => {
-  res.status(200).json({ message: "DALL-E API endpoint ready - use POST method" });
-});
-
-app.post('/api/v1/dalle', async (req, res) => {
-  try {
-    const { prompt } = req.body;
-
-    if (!prompt) {
-      return res.status(400).json({ 
-        error: 'Prompt is required',
-        message: 'Please provide a prompt in the request body'
-      });
-    }
-
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ 
-        error: 'OpenAI API key not configured',
-        message: 'Server configuration error'
-      });
-    }
-
-    console.log('🎨 Generating image for prompt:', prompt);
-
-    const response = await openai.images.generate({
-      model: 'dall-e-2',
-      prompt: `${prompt}, clean background, high quality`,
-      n: 1,
-      size: '1024x1024',
-      response_format: 'b64_json'
-    });
-
-    const image = response.data[0].b64_json;
-
-    console.log('✅ Image generated successfully');
-
-    res.status(200).json({ 
-      photo: image,
-      prompt: prompt,
-      timestamp: new Date().toISOString()
-    });
-
-  } catch (error) {
-    console.error('❌ DALL-E API Error:', error.message);
-    
-    res.status(500).json({ 
-      error: 'Failed to generate image',
-      message: error.message || 'Something went wrong with DALL-E API',
-      timestamp: new Date().toISOString()
-    });
-  }
-});
+// DALL-E API routes (with multi-tenant support)
+app.use('/api/v1/dalle', dalleRoutes);
 
 // Admin routes
 app.use('/api/admin', adminRoutes);
+
+// Store routes (multi-tenant)
+app.use('/api/store', storeRoutes);
 
 // Serve admin static files
 app.use('/admin', express.static(path.join(__dirname, 'views')));
@@ -153,6 +109,11 @@ app.get('/admin/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html'));
 });
 
+// Store dashboard page
+app.get('/store/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'store-dashboard.html'));
+});
+
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
@@ -164,7 +125,9 @@ app.use('*', (req, res) => {
       root: 'GET /',
       dalle: 'POST /api/v1/dalle',
       admin: 'GET /admin',
-      adminAPI: 'GET /api/admin/*'
+      adminAPI: 'GET /api/admin/*',
+      storeDashboard: 'GET /store/dashboard',
+      storeAPI: 'GET /api/store/*'
     }
   });
 });

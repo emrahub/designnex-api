@@ -17,6 +17,9 @@ const initDatabase = () => {
       db.run(`
         CREATE TABLE IF NOT EXISTS ai_generations (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
+          shop_id INTEGER,
+          customer_id TEXT,
+          session_id TEXT,
           prompt TEXT NOT NULL,
           model_used TEXT,
           response_time INTEGER,
@@ -26,7 +29,8 @@ const initDatabase = () => {
           quality TEXT,
           style TEXT,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-          ip_address TEXT
+          ip_address TEXT,
+          FOREIGN KEY (shop_id) REFERENCES shopify_stores (id)
         )
       `);
 
@@ -75,6 +79,88 @@ const initDatabase = () => {
           response_time INTEGER,
           ip_address TEXT,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      // Shopify Stores Table
+      db.run(`
+        CREATE TABLE IF NOT EXISTS shopify_stores (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          shop_domain TEXT UNIQUE NOT NULL,
+          shop_name TEXT,
+          shop_owner_email TEXT,
+          access_token TEXT,
+          plan_name TEXT DEFAULT 'basic',
+          installation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+          last_activity DATETIME,
+          status TEXT DEFAULT 'active' CHECK(status IN ('active', 'inactive', 'suspended')),
+          settings TEXT DEFAULT '{}',
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      // Customer Designs Table (for each store's customers)
+      db.run(`
+        CREATE TABLE IF NOT EXISTS customer_designs (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          shop_id INTEGER NOT NULL,
+          customer_id TEXT,
+          customer_email TEXT,
+          product_id TEXT,
+          product_title TEXT,
+          design_data TEXT NOT NULL,
+          ai_prompt TEXT,
+          design_preview_url TEXT,
+          status TEXT DEFAULT 'draft' CHECK(status IN ('draft', 'saved', 'ordered', 'printed')),
+          session_id TEXT,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (shop_id) REFERENCES shopify_stores (id)
+        )
+      `);
+
+      // Customer Orders Table (design orders)
+      db.run(`
+        CREATE TABLE IF NOT EXISTS customer_orders (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          shop_id INTEGER NOT NULL,
+          shopify_order_id TEXT,
+          customer_id TEXT,
+          customer_email TEXT,
+          design_id INTEGER,
+          product_id TEXT,
+          product_title TEXT,
+          product_variant_id TEXT,
+          quantity INTEGER DEFAULT 1,
+          unit_price DECIMAL(10,2),
+          total_price DECIMAL(10,2),
+          order_status TEXT DEFAULT 'pending' CHECK(order_status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
+          design_data TEXT,
+          print_ready_url TEXT,
+          order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+          shipped_date DATETIME,
+          tracking_number TEXT,
+          notes TEXT,
+          FOREIGN KEY (shop_id) REFERENCES shopify_stores (id),
+          FOREIGN KEY (design_id) REFERENCES customer_designs (id)
+        )
+      `);
+
+      // Store Analytics Table
+      db.run(`
+        CREATE TABLE IF NOT EXISTS store_analytics (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          shop_id INTEGER NOT NULL,
+          date DATE NOT NULL,
+          total_designs INTEGER DEFAULT 0,
+          total_orders INTEGER DEFAULT 0,
+          total_revenue DECIMAL(10,2) DEFAULT 0,
+          unique_customers INTEGER DEFAULT 0,
+          ai_generations INTEGER DEFAULT 0,
+          popular_products TEXT DEFAULT '{}',
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (shop_id) REFERENCES shopify_stores (id),
+          UNIQUE(shop_id, date)
         )
       `, (err) => {
         if (err) {
@@ -136,13 +222,13 @@ export const dbHelpers = {
   // Log AI generation
   logAIGeneration: (data) => {
     return new Promise((resolve, reject) => {
-      const { prompt, modelUsed, responseTime, success, errorMessage, imageSize, quality, style, ipAddress } = data;
+      const { shopId, customerId, sessionId, prompt, modelUsed, responseTime, success, errorMessage, imageSize, quality, style, ipAddress } = data;
       
       db.run(
         `INSERT INTO ai_generations 
-         (prompt, model_used, response_time, success, error_message, image_size, quality, style, ip_address) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [prompt, modelUsed, responseTime, success, errorMessage, imageSize, quality, style, ipAddress],
+         (shop_id, customer_id, session_id, prompt, model_used, response_time, success, error_message, image_size, quality, style, ip_address) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [shopId, customerId, sessionId, prompt, modelUsed, responseTime, success, errorMessage, imageSize, quality, style, ipAddress],
         function(err) {
           if (err) reject(err);
           else resolve(this.lastID);
@@ -245,6 +331,203 @@ export const dbHelpers = {
           else resolve(this.changes);
         }
       );
+    });
+  },
+
+  // === SHOPIFY STORE MANAGEMENT ===
+
+  // Register a new Shopify store
+  registerStore: (storeData) => {
+    return new Promise((resolve, reject) => {
+      const { shopDomain, shopName, shopOwnerEmail, accessToken, planName = 'basic' } = storeData;
+      
+      db.run(
+        `INSERT OR REPLACE INTO shopify_stores 
+         (shop_domain, shop_name, shop_owner_email, access_token, plan_name, last_activity) 
+         VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+        [shopDomain, shopName, shopOwnerEmail, accessToken, planName],
+        function(err) {
+          if (err) reject(err);
+          else resolve(this.lastID);
+        }
+      );
+    });
+  },
+
+  // Get store by domain
+  getStoreByDomain: (shopDomain) => {
+    return new Promise((resolve, reject) => {
+      db.get(
+        'SELECT * FROM shopify_stores WHERE shop_domain = ?',
+        [shopDomain],
+        (err, row) => {
+          if (err) reject(err);
+          else resolve(row);
+        }
+      );
+    });
+  },
+
+  // Save customer design
+  saveCustomerDesign: (designData) => {
+    return new Promise((resolve, reject) => {
+      const { 
+        shopId, customerId, customerEmail, productId, productTitle, 
+        designData: design, aiPrompt, designPreviewUrl, status = 'draft', sessionId 
+      } = designData;
+      
+      db.run(
+        `INSERT INTO customer_designs 
+         (shop_id, customer_id, customer_email, product_id, product_title, design_data, 
+          ai_prompt, design_preview_url, status, session_id, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+        [shopId, customerId, customerEmail, productId, productTitle, JSON.stringify(design), 
+         aiPrompt, designPreviewUrl, status, sessionId],
+        function(err) {
+          if (err) reject(err);
+          else resolve(this.lastID);
+        }
+      );
+    });
+  },
+
+  // Create customer order
+  createCustomerOrder: (orderData) => {
+    return new Promise((resolve, reject) => {
+      const {
+        shopId, shopifyOrderId, customerId, customerEmail, designId, productId, 
+        productTitle, productVariantId, quantity, unitPrice, totalPrice, designData
+      } = orderData;
+      
+      db.run(
+        `INSERT INTO customer_orders 
+         (shop_id, shopify_order_id, customer_id, customer_email, design_id, product_id, 
+          product_title, product_variant_id, quantity, unit_price, total_price, design_data) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [shopId, shopifyOrderId, customerId, customerEmail, designId, productId, 
+         productTitle, productVariantId, quantity, unitPrice, totalPrice, JSON.stringify(designData)],
+        function(err) {
+          if (err) reject(err);
+          else resolve(this.lastID);
+        }
+      );
+    });
+  },
+
+  // Get store dashboard data
+  getStoreDashboard: (shopId, days = 7) => {
+    return new Promise((resolve, reject) => {
+      const queries = [
+        // Recent designs
+        `SELECT COUNT(*) as total_designs FROM customer_designs 
+         WHERE shop_id = ? AND created_at >= datetime('now', '-${days} days')`,
+        
+        // Recent orders
+        `SELECT COUNT(*) as total_orders, COALESCE(SUM(total_price), 0) as total_revenue 
+         FROM customer_orders 
+         WHERE shop_id = ? AND order_date >= datetime('now', '-${days} days')`,
+        
+        // Unique customers
+        `SELECT COUNT(DISTINCT customer_email) as unique_customers 
+         FROM customer_designs 
+         WHERE shop_id = ? AND created_at >= datetime('now', '-${days} days')`,
+        
+        // AI generations
+        `SELECT COUNT(*) as ai_generations 
+         FROM ai_generations 
+         WHERE shop_id = ? AND created_at >= datetime('now', '-${days} days')`
+      ];
+
+      Promise.all(queries.map(query => {
+        return new Promise((resolve, reject) => {
+          db.get(query, [shopId], (err, row) => {
+            if (err) reject(err);
+            else resolve(row);
+          });
+        });
+      })).then(results => {
+        resolve({
+          designs: results[0].total_designs || 0,
+          orders: results[1].total_orders || 0,
+          revenue: results[1].total_revenue || 0,
+          customers: results[2].unique_customers || 0,
+          aiGenerations: results[3].ai_generations || 0
+        });
+      }).catch(reject);
+    });
+  },
+
+  // Get recent store activities
+  getStoreActivity: (shopId, limit = 20) => {
+    return new Promise((resolve, reject) => {
+      db.all(
+        `SELECT 'design' as type, id, customer_email, product_title, created_at, status
+         FROM customer_designs WHERE shop_id = ?
+         UNION ALL
+         SELECT 'order' as type, id, customer_email, product_title, order_date as created_at, order_status as status
+         FROM customer_orders WHERE shop_id = ?
+         ORDER BY created_at DESC LIMIT ?`,
+        [shopId, shopId, limit],
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
+      );
+    });
+  },
+
+  // Get store orders with filters
+  getStoreOrders: (shopId, filters = {}) => {
+    return new Promise((resolve, reject) => {
+      let query = `SELECT o.*, d.design_preview_url, d.ai_prompt 
+                   FROM customer_orders o 
+                   LEFT JOIN customer_designs d ON o.design_id = d.id 
+                   WHERE o.shop_id = ?`;
+      let params = [shopId];
+
+      if (filters.status) {
+        query += ' AND o.order_status = ?';
+        params.push(filters.status);
+      }
+
+      if (filters.dateFrom) {
+        query += ' AND o.order_date >= ?';
+        params.push(filters.dateFrom);
+      }
+
+      query += ' ORDER BY o.order_date DESC LIMIT ?';
+      params.push(filters.limit || 50);
+
+      db.all(query, params, (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
+  },
+
+  // Update order status
+  updateOrderStatus: (orderId, status, trackingNumber = null, notes = null) => {
+    return new Promise((resolve, reject) => {
+      let query = 'UPDATE customer_orders SET order_status = ?';
+      let params = [status];
+
+      if (status === 'shipped' && trackingNumber) {
+        query += ', tracking_number = ?, shipped_date = CURRENT_TIMESTAMP';
+        params.push(trackingNumber);
+      }
+
+      if (notes) {
+        query += ', notes = ?';
+        params.push(notes);
+      }
+
+      query += ' WHERE id = ?';
+      params.push(orderId);
+
+      db.run(query, params, function(err) {
+        if (err) reject(err);
+        else resolve(this.changes);
+      });
     });
   }
 };

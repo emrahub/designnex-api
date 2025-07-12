@@ -31,7 +31,11 @@ router.route('/').post(async (req, res) => {
       quality = 'hd',
       style = 'vivid',
       background = 'transparent',
-      model_preference = 'auto'
+      model_preference = 'auto',
+      // Multi-tenant parameters
+      shop_id = null,
+      customer_id = null,
+      session_id = null
     } = req.body;
 
     console.log('🎨 Image generation request:', { prompt, size, quality, style, background, model_preference });
@@ -99,6 +103,9 @@ router.route('/').post(async (req, res) => {
           // Log successful generation
           const responseTime = Date.now() - startTime;
           await dbHelpers.logAIGeneration({
+            shopId: shop_id,
+            customerId: customer_id,
+            sessionId: session_id,
             prompt,
             modelUsed,
             responseTime,
@@ -152,6 +159,9 @@ router.route('/').post(async (req, res) => {
       // Log successful generation
       const responseTime = Date.now() - startTime;
       await dbHelpers.logAIGeneration({
+        shopId: shop_id,
+        customerId: customer_id,
+        sessionId: session_id,
         prompt,
         modelUsed,
         responseTime,
@@ -198,6 +208,9 @@ router.route('/').post(async (req, res) => {
       // Log successful generation
       const responseTime = Date.now() - startTime;
       await dbHelpers.logAIGeneration({
+        shopId: shop_id,
+        customerId: customer_id,
+        sessionId: session_id,
         prompt,
         modelUsed,
         responseTime,
@@ -230,6 +243,9 @@ router.route('/').post(async (req, res) => {
     // Log failed generation
     const responseTime = Date.now() - startTime;
     await dbHelpers.logAIGeneration({
+      shopId: shop_id,
+      customerId: customer_id,
+      sessionId: session_id,
       prompt: req.body.prompt || 'unknown',
       modelUsed: 'failed',
       responseTime,

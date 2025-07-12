@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DesignNex Store Dashboard</title>
+    <link rel="stylesheet" href="/admin/admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .order-status-pending { background-color: #fef3c7; color: #92400e; }
+        .order-status-processing { background-color: #dbeafe; color: #1e40af; }
+        .order-status-shipped { background-color: #d1fae5; color: #065f46; }
+        .order-status-delivered { background-color: #dcfce7; color: #166534; }
+        .order-status-cancelled { background-color: #fee2e2; color: #991b1b; }
+        
+        .design-status-draft { background-color: #f3f4f6; color: #374151; }
+        .design-status-saved { background-color: #dbeafe; color: #1e40af; }
+        .design-status-ordered { background-color: #dcfce7; color: #166534; }
+        .design-status-printed { background-color: #f3e8ff; color: #7c3aed; }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .growth-positive { color: #059669; }
+        .growth-negative { color: #dc2626; }
+        .growth-neutral { color: #6b7280; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="flex items-center">
+                <h1 class="text-xl font-bold text-gray-800">
+                    <i class="fas fa-store mr-2 text-blue-600"></i>
+                    <span id="storeName">Store Dashboard</span>
+                </h1>
+                <span class="ml-4 text-sm text-gray-600" id="storeDomain"></span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <select id="periodSelect" class="text-sm border border-gray-300 rounded px-2 py-1">
+                    <option value="7">Last 7 days</option>
+                    <option value="30">Last 30 days</option>
+                    <option value="90">Last 90 days</option>
+                </select>
+                <span class="text-sm text-gray-600" id="lastUpdate">Loading...</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <!-- Customer Designs -->
+            <div class="stat-card">
+                <div class="stat-icon bg-blue-100 text-blue-600">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="text-sm font-medium text-gray-600">Customer Designs</p>
+                    <p class="text-2xl font-semibold text-gray-900" id="totalDesigns">-</p>
+                    <p class="text-xs" id="designsGrowth">-</p>
+                </div>
+            </div>
+
+            <!-- Orders -->
+            <div class="stat-card">
+                <div class="stat-icon bg-green-100 text-green-600">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="text-sm font-medium text-gray-600">Orders</p>
+                    <p class="text-2xl font-semibold text-gray-900" id="totalOrders">-</p>
+                    <p class="text-xs" id="ordersGrowth">-</p>
+                </div>
+            </div>
+
+            <!-- Revenue -->
+            <div class="stat-card">
+                <div class="stat-icon bg-yellow-100 text-yellow-600">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="text-sm font-medium text-gray-600">Revenue</p>
+                    <p class="text-2xl font-semibold text-gray-900" id="totalRevenue">-</p>
+                    <p class="text-xs" id="revenueGrowth">-</p>
+                </div>
+            </div>
+
+            <!-- Customers -->
+            <div class="stat-card">
+                <div class="stat-icon bg-purple-100 text-purple-600">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <p class="text-sm font-medium text-gray-600">Unique Customers</p>
+                    <p class="text-2xl font-semibold text-gray-900" id="totalCustomers">-</p>
+                    <p class="text-xs" id="customersGrowth">-</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="charts-grid">
+            <!-- Daily Activity Chart -->
+            <div class="chart-card">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-chart-line mr-2 text-blue-600"></i>
+                    Daily Activity
+                </h3>
+                <div class="chart-container">
+                    <canvas id="activityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Order Status Distribution -->
+            <div class="chart-card">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-chart-pie mr-2 text-green-600"></i>
+                    Order Status Distribution
+                </h3>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Sections -->
+        <div class="activity-grid">
+            <!-- Recent Orders -->
+            <div class="activity-card">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        <i class="fas fa-list mr-2 text-purple-600"></i>
+                        Recent Orders
+                    </h3>
+                    <button onclick="loadOrders()" class="text-sm text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-refresh mr-1"></i>
+                        Refresh
+                    </button>
+                </div>
+                <div id="recentOrders">
+                    <div class="text-center text-gray-500 py-4">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading orders...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Designs -->
+            <div class="activity-card">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">
+                        <i class="fas fa-palette mr-2 text-red-600"></i>
+                        Recent Designs
+                    </h3>
+                    <button onclick="loadDesigns()" class="text-sm text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-refresh mr-1"></i>
+                        Refresh
+                    </button>
+                </div>
+                <div id="recentDesigns">
+                    <div class="text-center text-gray-500 py-4">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        Loading designs...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Management Modal -->
+        <div id="orderModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">Update Order Status</h3>
+                    <button onclick="closeOrderModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="orderUpdateForm">
+                    <input type="hidden" id="orderIdInput">
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <select id="orderStatusSelect" class="w-full border border-gray-300 rounded px-3 py-2">
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tracking Number (Optional)</label>
+                        <input type="text" id="trackingNumberInput" class="w-full border border-gray-300 rounded px-3 py-2" placeholder="Enter tracking number">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Notes (Optional)</label>
+                        <textarea id="notesInput" class="w-full border border-gray-300 rounded px-3 py-2" rows="3" placeholder="Additional notes..."></textarea>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button type="submit" class="flex-1 btn-primary">
+                            <i class="fas fa-save mr-2"></i>
+                            Update Order
+                        </button>
+                        <button type="button" onclick="closeOrderModal()" class="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentStore = null;
+        let activityChart, statusChart;
+
+        // Get shop domain from URL or set default for testing
+        const shopDomain = new URLSearchParams(window.location.search).get('shop') || 'test-store.myshopify.com';
+
+        // Load store dashboard
+        async function loadDashboard() {
+            try {
+                const period = document.getElementById('periodSelect').value;
+                const response = await fetch(`/api/store/dashboard?days=${period}`, {
+                    headers: {
+                        'X-Shop-Domain': shopDomain
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load dashboard');
+                }
+
+                const data = await response.json();
+                updateDashboard(data);
+                currentStore = data.store;
+
+            } catch (error) {
+                console.error('Dashboard error:', error);
+                showError('Failed to load dashboard data');
+            }
+        }
+
+        // Update dashboard with data
+        function updateDashboard(data) {
+            // Update store info
+            document.getElementById('storeName').textContent = data.store.name || 'Store Dashboard';
+            document.getElementById('storeDomain').textContent = data.store.domain;
+
+            // Update stats
+            document.getElementById('totalDesigns').textContent = data.stats.designs || 0;
+            document.getElementById('totalOrders').textContent = data.stats.orders || 0;
+            document.getElementById('totalRevenue').textContent = '$' + (data.stats.revenue || 0).toFixed(2);
+            document.getElementById('totalCustomers').textContent = data.stats.customers || 0;
+
+            // Update growth indicators
+            updateGrowthIndicator('designsGrowth', data.growth.designs);
+            updateGrowthIndicator('ordersGrowth', data.growth.orders);
+            updateGrowthIndicator('revenueGrowth', data.growth.revenue);
+            updateGrowthIndicator('customersGrowth', data.growth.customers);
+
+            // Update last update time
+            document.getElementById('lastUpdate').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+        }
+
+        // Update growth indicator
+        function updateGrowthIndicator(elementId, growth) {
+            const element = document.getElementById(elementId);
+            const icon = growth > 0 ? '↗' : growth < 0 ? '↘' : '→';
+            const className = growth > 0 ? 'growth-positive' : growth < 0 ? 'growth-negative' : 'growth-neutral';
+            
+            element.textContent = `${icon} ${Math.abs(growth)}%`;
+            element.className = `text-xs ${className}`;
+        }
+
+        // Load orders
+        async function loadOrders() {
+            try {
+                const response = await fetch('/api/store/orders?limit=10', {
+                    headers: { 'X-Shop-Domain': shopDomain }
+                });
+                const orders = await response.json();
+                displayOrders(orders);
+            } catch (error) {
+                console.error('Load orders error:', error);
+            }
+        }
+
+        // Display orders
+        function displayOrders(orders) {
+            const container = document.getElementById('recentOrders');
+            
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-4">No orders found</div>';
+                return;
+            }
+
+            container.innerHTML = orders.map(order => `
+                <div class="activity-item">
+                    <div class="activity-content">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${order.customer_email}</p>
+                                <p class="text-xs text-gray-600">${order.product_title}</p>
+                                <p class="text-xs text-gray-500">$${order.total_price} • ${new Date(order.order_date).toLocaleDateString()}</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="status-badge order-status-${order.order_status}">${order.order_status}</span>
+                                <button onclick="openOrderModal(${order.id}, '${order.order_status}')" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load designs
+        async function loadDesigns() {
+            try {
+                const response = await fetch('/api/store/designs?limit=10', {
+                    headers: { 'X-Shop-Domain': shopDomain }
+                });
+                const designs = await response.json();
+                displayDesigns(designs);
+            } catch (error) {
+                console.error('Load designs error:', error);
+            }
+        }
+
+        // Display designs
+        function displayDesigns(designs) {
+            const container = document.getElementById('recentDesigns');
+            
+            if (designs.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 py-4">No designs found</div>';
+                return;
+            }
+
+            container.innerHTML = designs.map(design => `
+                <div class="activity-item">
+                    <div class="activity-content">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${design.customer_email || 'Anonymous'}</p>
+                                <p class="text-xs text-gray-600">${design.product_title}</p>
+                                ${design.ai_prompt ? `<p class="text-xs text-gray-500">"${design.ai_prompt.substring(0, 40)}..."</p>` : ''}
+                                <p class="text-xs text-gray-500">${new Date(design.created_at).toLocaleDateString()}</p>
+                            </div>
+                            <span class="status-badge design-status-${design.status}">${design.status}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Order modal functions
+        function openOrderModal(orderId, currentStatus) {
+            document.getElementById('orderIdInput').value = orderId;
+            document.getElementById('orderStatusSelect').value = currentStatus;
+            document.getElementById('orderModal').classList.remove('hidden');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.add('hidden');
+            document.getElementById('orderUpdateForm').reset();
+        }
+
+        // Update order status
+        document.getElementById('orderUpdateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const orderId = document.getElementById('orderIdInput').value;
+            const status = document.getElementById('orderStatusSelect').value;
+            const trackingNumber = document.getElementById('trackingNumberInput').value;
+            const notes = document.getElementById('notesInput').value;
+
+            try {
+                const response = await fetch(`/api/store/orders/${orderId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Shop-Domain': shopDomain
+                    },
+                    body: JSON.stringify({
+                        status,
+                        tracking_number: trackingNumber,
+                        notes
+                    })
+                });
+
+                if (response.ok) {
+                    closeOrderModal();
+                    loadOrders(); // Refresh orders
+                    showSuccess('Order status updated successfully');
+                } else {
+                    throw new Error('Failed to update order');
+                }
+            } catch (error) {
+                console.error('Update order error:', error);
+                showError('Failed to update order status');
+            }
+        });
+
+        // Period change handler
+        document.getElementById('periodSelect').addEventListener('change', loadDashboard);
+
+        // Utility functions
+        function showError(message) {
+            console.error(message);
+            // Could implement toast notifications here
+        }
+
+        function showSuccess(message) {
+            console.log(message);
+            // Could implement toast notifications here
+        }
+
+        // Auto refresh every 5 minutes
+        setInterval(() => {
+            loadDashboard();
+            loadOrders();
+            loadDesigns();
+        }, 300000);
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboard();
+            loadOrders();
+            loadDesigns();
+        });
+    </script>
+</body>
+</html>
