@@ -158,15 +158,23 @@ body {
 
 .mobile-brand-icon {
   font-size: var(--font-size-lg);
-  color: var(--shopify-primary);
+  background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .mobile-brand-title {
   font-size: var(--font-size-lg);
   font-weight: 700;
   margin: 0;
-  color: var(--neutral-700);
   letter-spacing: -0.025em;
+  background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 /* Sidebar */
@@ -227,22 +235,21 @@ body {
 .brand-logo {
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: var(--font-size-lg);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
   transition: all var(--transition-base);
   cursor: pointer;
 }
 
 .brand-logo:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
 }
 
 .brand-logo i {
@@ -263,6 +270,11 @@ body {
   margin: 0;
   line-height: 1.2;
   letter-spacing: -0.025em;
+  background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .brand-status {
