@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>DesignNex Admin Dashboard</title>
+    <link rel="stylesheet" href="/admin/enhanced-admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#00848e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="DesignNex Admin">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+</head>
+<body>
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <button class="mobile-menu-button" onclick="toggleMobileSidebar()" aria-label="Toggle menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="mobile-brand">
+            <i class="fas fa-cube mobile-brand-icon"></i>
+            <h1 class="mobile-brand-title">DesignNex</h1>
+        </div>
+        <button class="mobile-menu-button" onclick="logout()" aria-label="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <div class="brand-logo">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <div class="brand-text nav-text">
+                        <h2 class="brand-title">DesignNex</h2>
+                        <div class="brand-status">
+                            <span class="status-dot"></span>
+                            <p class="brand-subtitle">Admin Dashboard</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav" role="navigation">
+                <a href="#" class="nav-item active" data-section="dashboard" onclick="showSection('dashboard', this)">
+                    <i class="fas fa-chart-pie"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="orders" onclick="showSection('orders', this)">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="nav-text">Orders</span>
+                </a>
+                <a href="#" class="nav-item" data-section="designs" onclick="showSection('designs', this)">
+                    <i class="fas fa-paint-brush"></i>
+                    <span class="nav-text">Customer Designs</span>
+                </a>
+                <a href="#" class="nav-item" data-section="customers" onclick="showSection('customers', this)">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-text">Customers</span>
+                </a>
+                <a href="#" class="nav-item" data-section="analytics" onclick="showSection('analytics', this)">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="nav-text">Analytics</span>
+                </a>
+                <a href="#" class="nav-item" data-section="stores" onclick="showSection('stores', this)">
+                    <i class="fas fa-store-alt"></i>
+                    <span class="nav-text">Stores</span>
+                </a>
+                <a href="#" class="nav-item" data-section="ai-usage" onclick="showSection('ai-usage', this)">
+                    <i class="fas fa-robot"></i>
+                    <span class="nav-text">AI Usage</span>
+                </a>
+                <a href="#" class="nav-item" data-section="system" onclick="showSection('system', this)">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">System</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button onclick="logout()" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="btn-text nav-text">Logout</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <div class="content-wrapper">
+                
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="content-section active">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Dashboard Overview</h1>
+                            <p class="page-subtitle">Monitor your stores performance and activity</p>
+                        </div>
+                        <div class="page-actions">
+                            <select id="storeFilter" class="form-select" onchange="filterByStore(this.value)">
+                                <option value="">All Stores</option>
+                            </select>
+                            <select id="periodFilter" class="form-select" onchange="updatePeriod(this.value)">
+                                <option value="7">Last 7 days</option>
+                                <option value="30">Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                            </select>
+                            <button onclick="refreshDashboard()" class="btn btn-secondary">
+                                <i class="fas fa-refresh"></i>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Key Metrics -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <h3 class="stat-card-title">Total Revenue</h3>
+                                <div class="stat-card-icon success">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                            </div>
+                            <div class="stat-card-value" id="totalRevenue">$0.00</div>
+                            <div class="stat-card-change" id="revenueChange">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0% from last period</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <h3 class="stat-card-title">Total Orders</h3>
+                                <div class="stat-card-icon primary">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                            </div>
+                            <div class="stat-card-value" id="totalOrders">0</div>
+                            <div class="stat-card-change" id="ordersChange">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0% from last period</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <h3 class="stat-card-title">Customer Designs</h3>
+                                <div class="stat-card-icon warning">
+                                    <i class="fas fa-paint-brush"></i>
+                                </div>
+                            </div>
+                            <div class="stat-card-value" id="totalDesigns">0</div>
+                            <div class="stat-card-change" id="designsChange">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0% from last period</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <h3 class="stat-card-title">Active Stores</h3>
+                                <div class="stat-card-icon error">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                            </div>
+                            <div class="stat-card-value" id="totalStores">0</div>
+                            <div class="stat-card-change" id="storesChange">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0% from last period</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Row -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3 class="font-semibold mb-4">
+                                <i class="fas fa-chart-line text-primary mr-2"></i>
+                                Revenue Trend
+                            </h3>
+                            <div class="chart-container">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3 class="font-semibold mb-4">
+                                <i class="fas fa-chart-pie text-success mr-2"></i>
+                                Order Status Distribution
+                            </h3>
+                            <div class="chart-container">
+                                <canvas id="orderStatusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3 class="font-semibold mb-4">Recent Orders</h3>
+                            <div id="recentOrdersList">
+                                <div class="loading-text">
+                                    <div class="spinner"></div>
+                                    Loading recent orders...
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3 class="font-semibold mb-4">Recent Designs</h3>
+                            <div id="recentDesignsList">
+                                <div class="loading-text">
+                                    <div class="spinner"></div>
+                                    Loading recent designs...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Orders Section -->
+                <section id="orders" class="content-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Order Management</h1>
+                            <p class="page-subtitle">Track and manage all custom product orders</p>
+                        </div>
+                        <div class="page-actions">
+                            <select id="orderStatusFilter" class="form-select" onchange="filterOrders(this.value)">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="processing">Processing</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <button onclick="exportOrders()" class="btn btn-secondary">
+                                <i class="fas fa-download"></i>
+                                <span>Export</span>
+                            </button>
+                            <button onclick="refreshOrders()" class="btn btn-primary">
+                                <i class="fas fa-refresh"></i>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="data-table">
+                        <div class="table-header table-row" style="grid-template-columns: 2fr 1fr 1fr 1fr 1fr;">
+                            <div>Customer & Product</div>
+                            <div>Store</div>
+                            <div>Amount</div>
+                            <div>Status</div>
+                            <div>Actions</div>
+                        </div>
+                        <div id="ordersTableBody">
+                            <div class="loading-text">
+                                <div class="spinner"></div>
+                                Loading orders...
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Designs Section -->
+                <section id="designs" class="content-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Customer Designs</h1>
+                            <p class="page-subtitle">Browse and manage all customer created designs</p>
+                        </div>
+                        <div class="page-actions">
+                            <select id="designStatusFilter" class="form-select" onchange="filterDesigns(this.value)">
+                                <option value="">All Status</option>
+                                <option value="draft">Draft</option>
+                                <option value="saved">Saved</option>
+                                <option value="ordered">Ordered</option>
+                            </select>
+                            <button onclick="exportDesigns()" class="btn btn-secondary">
+                                <i class="fas fa-download"></i>
+                                <span>Export</span>
+                            </button>
+                            <button onclick="refreshDesigns()" class="btn btn-primary">
+                                <i class="fas fa-refresh"></i>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="data-table">
+                        <div class="table-header table-row" style="grid-template-columns: 2fr 2fr 1fr 1fr 1fr;">
+                            <div>Customer & Product</div>
+                            <div>AI Prompt</div>
+                            <div>Store</div>
+                            <div>Status</div>
+                            <div>Date</div>
+                        </div>
+                        <div id="designsTableBody">
+                            <div class="loading-text">
+                                <div class="spinner"></div>
+                                Loading designs...
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Customers Section -->
+                <section id="customers" class="content-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Customer Analytics</h1>
+                            <p class="page-subtitle">Understand your customer behavior and preferences</p>
+                        </div>
+                        <div class="page-actions">
+                            <button onclick="refreshCustomers()" class="btn btn-primary">
+                                <i class="fas fa-refresh"></i>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3 class="font-semibold mb-4">Top Customers</h3>
+                            <div id="topCustomersList">
+                                <div class="loading-text">
+                                    <div class="spinner"></div>
+                                    Loading customer data...
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3 class="font-semibold mb-4">Customer Journey</h3>
+                            <div class="chart-container">
+                                <canvas id="customerJourneyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Analytics Section -->
+                <section id="analytics" class="content-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Advanced Analytics</h1>
+                            <p class="page-subtitle">Deep insights into your business performance</p>
+                        </div>
+                        <div class="page-actions">
+                            <select id="analyticsPeriod" class="form-select" onchange="updateAnalytics(this.value)">
+                                <option value="7">Last 7 days</option>
+                                <option value="30">Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                                <option value="365">Last year</option>
+                            </select>
+                            <button onclick="exportAnalytics()" class="btn btn-secondary">
+                                <i class="fas fa-download"></i>
+                                <span>Export Report</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3 class="font-semibold mb-4">Conversion Funnel</h3>
+                            <div class="chart-container">
+                                <canvas id="conversionChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <h3 class="font-semibold mb-4">Popular AI Prompts</h3>
+                            <div id="popularPrompts">
+                                <div class="loading-text">
+                                    <div class="spinner"></div>
+                                    Loading prompt data...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Stores Section -->
+                <section id="stores" class="content-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">Store Management</h1>
+                            <p class="page-subtitle">Manage your connected Shopify stores</p>
+                        </div>
+                        <div class="page-actions">
+                            <button onclick="openAddStoreModal()" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Store</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="storesGrid" class="stats-grid">
+                        <div class="loading-text">
+                            <div class="spinner"></div>
+                            Loading stores...
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- AI Usage Section -->
+                <section id="ai-usage" class="content-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">AI Usage Analytics</h1>
+                            <p class="page-subtitle">Monitor AI generation performance and costs</p>
+                        </div>
+                        <div class="page-actions">
+                            <button onclick="refreshAIUsage()" class="btn btn-primary">
+                                <i class="fas fa-refresh"></i>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <h3 class="stat-card-title">AI Generations Today</h3>
+                                <div class="stat-card-icon primary">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                            </div>
+                            <div class="stat-card-value" id="aiGenerationsToday">0</div>
+                            <div class="stat-card-change" id="aiGenerationsChange">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0% from yesterday</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-card-header">
+                                <h3 class="stat-card-title">Success Rate</h3>
+                                <div class="stat-card-icon success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                            <div class="stat-card-value" id="aiSuccessRate">0%</div>
+                            <div class="stat-card-change" id="successRateChange">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>0% from last period</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3 class="font-semibold mb-4">Recent AI Generations</h3>
+                        <div id="aiGenerationsList">
+                            <div class="loading-text">
+                                <div class="spinner"></div>
+                                Loading AI generation data...
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- System Section -->
+                <section id="system" class="content-section">
+                    <div class="page-header">
+                        <div>
+                            <h1 class="page-title">System Management</h1>
+                            <p class="page-subtitle">Monitor system health and performance</p>
+                        </div>
+                        <div class="page-actions">
+                            <select id="logLevelFilter" class="form-select" onchange="filterSystemLogs(this.value)">
+                                <option value="">All Levels</option>
+                                <option value="error">Error</option>
+                                <option value="warn">Warning</option>
+                                <option value="info">Info</option>
+                            </select>
+                            <button onclick="refreshSystemLogs()" class="btn btn-primary">
+                                <i class="fas fa-refresh"></i>
+                                <span>Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h3 class="font-semibold mb-4">System Logs</h3>
+                        <div id="systemLogsList">
+                            <div class="loading-text">
+                                <div class="spinner"></div>
+                                Loading system logs...
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+    
+    <!-- Order Update Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Update Order Status</h3>
+                <button class="modal-close" onclick="closeOrderModal()" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="orderUpdateForm">
+                <input type="hidden" id="orderIdInput">
+                
+                <div class="form-group">
+                    <label class="form-label" for="orderStatusSelect">Status</label>
+                    <select id="orderStatusSelect" class="form-select" required>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="trackingNumberInput">Tracking Number (Optional)</label>
+                    <input type="text" id="trackingNumberInput" class="form-input" placeholder="Enter tracking number">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="notesInput">Notes (Optional)</label>
+                    <textarea id="notesInput" class="form-textarea" placeholder="Additional notes..."></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        <span>Update Order</span>
+                    </button>
+                    <button type="button" onclick="closeOrderModal()" class="btn btn-secondary">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading overlay for global actions -->
+    <div id="loadingOverlay" class="modal" style="background: rgba(255, 255, 255, 0.9);">
+        <div class="loading-text" style="color: var(--neutral-700);">
+            <div class="spinner"></div>
+            <span id="loadingMessage">Loading...</span>
+        </div>
+    </div>
+
+    <script src="/admin/enhanced-admin.js"></script>
+</body>
+</html>

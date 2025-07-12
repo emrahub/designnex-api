@@ -86,6 +86,185 @@ router.get('/stores-overview', async (req, res) => {
   }
 });
 
+// Enhanced dashboard overview endpoint
+router.get('/dashboard-overview', async (req, res) => {
+  try {
+    const period = parseInt(req.query.days) || 7;
+    
+    // Get current period data
+    const currentData = await Promise.all([
+      // Revenue and orders
+      new Promise((resolve, reject) => {
+        const { default: db } = require('../database/init.js');
+        db.get(
+          `SELECT COUNT(*) as orders, COALESCE(SUM(total_price), 0) as revenue 
+           FROM customer_orders 
+           WHERE order_date >= datetime('now', '-${period} days')`,
+          (err, row) => {
+            if (err) reject(err);
+            else resolve(row || {orders: 0, revenue: 0});
+          }
+        );
+      }),
+      // Designs
+      new Promise((resolve, reject) => {
+        const { default: db } = require('../database/init.js');
+        db.get(
+          `SELECT COUNT(*) as designs FROM customer_designs 
+           WHERE created_at >= datetime('now', '-${period} days')`,
+          (err, row) => {
+            if (err) reject(err);
+            else resolve(row || {designs: 0});
+          }
+        );
+      }),
+      // Active stores
+      new Promise((resolve, reject) => {
+        const { default: db } = require('../database/init.js');
+        db.get(
+          `SELECT COUNT(*) as stores FROM shopify_stores WHERE status = 'active'`,
+          (err, row) => {
+            if (err) reject(err);
+            else resolve(row || {stores: 0});
+          }
+        );
+      })
+    ]);
+
+    // Get previous period for comparison
+    const previousData = await Promise.all([
+      new Promise((resolve, reject) => {
+        const { default: db } = require('../database/init.js');
+        db.get(
+          `SELECT COUNT(*) as orders, COALESCE(SUM(total_price), 0) as revenue 
+           FROM customer_orders 
+           WHERE order_date >= datetime('now', '-${period * 2} days') 
+           AND order_date < datetime('now', '-${period} days')`,
+          (err, row) => {
+            if (err) reject(err);
+            else resolve(row || {orders: 0, revenue: 0});
+          }
+        );
+      }),
+      new Promise((resolve, reject) => {
+        const { default: db } = require('../database/init.js');
+        db.get(
+          `SELECT COUNT(*) as designs FROM customer_designs 
+           WHERE created_at >= datetime('now', '-${period * 2} days') 
+           AND created_at < datetime('now', '-${period} days')`,
+          (err, row) => {
+            if (err) reject(err);
+            else resolve(row || {designs: 0});
+          }
+        );
+      })
+    ]);
+
+    // Calculate growth percentages
+    const calculateGrowth = (current, previous) => {
+      if (previous === 0) return current > 0 ? 100 : 0;
+      return Math.round(((current - previous) / previous) * 100);
+    };
+
+    const response = {
+      totalRevenue: currentData[0].revenue,
+      totalOrders: currentData[0].orders,
+      totalDesigns: currentData[1].designs,
+      totalStores: currentData[2].stores,
+      changes: {
+        revenue: calculateGrowth(currentData[0].revenue, previousData[0].revenue),
+        orders: calculateGrowth(currentData[0].orders, previousData[0].orders),
+        designs: calculateGrowth(currentData[1].designs, previousData[1].designs),
+        stores: 0 // Stores don't change much period to period
+      }
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error('❌ Dashboard overview error:', error);
+    res.json({
+      totalRevenue: 0,
+      totalOrders: 0,
+      totalDesigns: 0,
+      totalStores: 0,
+      changes: { revenue: 0, orders: 0, designs: 0, stores: 0 }
+    });
+  }
+});
+
+// Revenue chart data endpoint
+router.get('/revenue-data', async (req, res) => {
+  try {
+    const period = parseInt(req.query.days) || 7;
+    
+    const revenueData = await new Promise((resolve, reject) => {
+      const { default: db } = require('../database/init.js');
+      db.all(
+        `SELECT DATE(order_date) as date, COALESCE(SUM(total_price), 0) as revenue
+         FROM customer_orders 
+         WHERE order_date >= datetime('now', '-${period} days')
+         GROUP BY DATE(order_date)
+         ORDER BY date ASC`,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows || []);
+        }
+      );
+    });
+
+    // Generate labels and values for chart
+    const labels = [];
+    const values = [];
+    
+    for (let i = period - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+      
+      const dayData = revenueData.find(row => row.date === dateStr);
+      values.push(dayData ? dayData.revenue : 0);
+    }
+
+    res.json({ labels, values });
+  } catch (error) {
+    console.error('❌ Revenue data error:', error);
+    res.json({ labels: [], values: [] });
+  }
+});
+
+// Orders chart data endpoint
+router.get('/orders-data', async (req, res) => {
+  try {
+    const ordersByStatus = await new Promise((resolve, reject) => {
+      const { default: db } = require('../database/init.js');
+      db.all(
+        `SELECT order_status, COUNT(*) as count
+         FROM customer_orders 
+         GROUP BY order_status`,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows || []);
+        }
+      );
+    });
+
+    // Map to expected order: pending, processing, shipped, delivered
+    const statusMap = { pending: 0, processing: 0, shipped: 0, delivered: 0 };
+    ordersByStatus.forEach(row => {
+      if (statusMap.hasOwnProperty(row.order_status)) {
+        statusMap[row.order_status] = row.count;
+      }
+    });
+
+    res.json({ values: Object.values(statusMap) });
+  } catch (error) {
+    console.error('❌ Orders data error:', error);
+    res.json({ values: [0, 0, 0, 0] });
+  }
+});
+
 // AI Generation statistics
 router.get('/ai-stats', async (req, res) => {
   try {
