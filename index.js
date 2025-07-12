@@ -106,7 +106,7 @@ app.get('/admin/login', (req, res) => {
 });
 
 app.get('/admin/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html'));
+  res.sendFile(path.join(__dirname, 'views', 'unified-admin.html'));
 });
 
 // Store dashboard page

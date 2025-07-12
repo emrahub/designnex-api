@@ -24,6 +24,68 @@ router.get('/dashboard', async (req, res) => {
   }
 });
 
+// Orders overview endpoint
+router.get('/orders-overview', async (req, res) => {
+  try {
+    // This is a simplified version - in production you'd aggregate from all stores
+    const orders = await new Promise((resolve, reject) => {
+      const { default: db } = require('../database/init.js');
+      db.all(
+        `SELECT COUNT(*) as total, COALESCE(SUM(total_price), 0) as revenue 
+         FROM customer_orders`,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows[0] || {total: 0, revenue: 0});
+        }
+      );
+    });
+    res.json(orders);
+  } catch (error) {
+    console.error('❌ Orders overview error:', error);
+    res.json({total: 0, revenue: 0});
+  }
+});
+
+// Designs overview endpoint
+router.get('/designs-overview', async (req, res) => {
+  try {
+    const designs = await new Promise((resolve, reject) => {
+      const { default: db } = require('../database/init.js');
+      db.get(
+        `SELECT COUNT(*) as total FROM customer_designs`,
+        (err, row) => {
+          if (err) reject(err);
+          else resolve(row || {total: 0});
+        }
+      );
+    });
+    res.json(designs);
+  } catch (error) {
+    console.error('❌ Designs overview error:', error);
+    res.json({total: 0});
+  }
+});
+
+// Stores overview endpoint
+router.get('/stores-overview', async (req, res) => {
+  try {
+    const stores = await new Promise((resolve, reject) => {
+      const { default: db } = require('../database/init.js');
+      db.get(
+        `SELECT COUNT(*) as total FROM shopify_stores WHERE status = 'active'`,
+        (err, row) => {
+          if (err) reject(err);
+          else resolve(row || {total: 0});
+        }
+      );
+    });
+    res.json(stores);
+  } catch (error) {
+    console.error('❌ Stores overview error:', error);
+    res.json({total: 0});
+  }
+});
+
 // AI Generation statistics
 router.get('/ai-stats', async (req, res) => {
   try {
