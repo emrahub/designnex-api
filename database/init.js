@@ -532,11 +532,115 @@ export const dbHelpers = {
   }
 };
 
+// Insert sample data for testing
+const insertSampleData = () => {
+  // Insert sample store
+  db.run(`
+    INSERT OR IGNORE INTO shopify_stores 
+    (shop_domain, shop_name, shop_owner_email, access_token, plan_name, status) 
+    VALUES (?, ?, ?, ?, ?, ?)
+  `, [
+    'test-store.myshopify.com',
+    'Test Store',
+    'owner@teststore.com',
+    'sample_token',
+    'premium',
+    'active'
+  ], function(err) {
+    if (err) {
+      console.error('Sample store insert error:', err);
+      return;
+    }
+    
+    const storeId = this.lastID || 1;
+    console.log(`✅ Sample store created with ID: ${storeId}`);
+    
+    // Insert sample customer designs
+    const sampleDesigns = [
+      {
+        customer_email: 'customer1@example.com',
+        product_title: 'Custom T-Shirt',
+        ai_prompt: 'Blue dragon with fire breathing',
+        status: 'saved'
+      },
+      {
+        customer_email: 'customer2@example.com', 
+        product_title: 'Custom Hoodie',
+        ai_prompt: 'Minimalist mountain landscape',
+        status: 'ordered'
+      },
+      {
+        customer_email: 'customer1@example.com',
+        product_title: 'Custom T-Shirt',
+        ai_prompt: 'Abstract geometric pattern',
+        status: 'draft'
+      }
+    ];
+    
+    sampleDesigns.forEach((design, index) => {
+      db.run(`
+        INSERT OR IGNORE INTO customer_designs 
+        (shop_id, customer_id, customer_email, product_id, product_title, design_data, ai_prompt, status, session_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        storeId,
+        `customer_${index + 1}`,
+        design.customer_email,
+        `product_${index + 1}`,
+        design.product_title,
+        JSON.stringify({color: '#FF0000', size: 'M'}),
+        design.ai_prompt,
+        design.status,
+        `session_${index + 1}`
+      ]);
+    });
+    
+    // Insert sample orders
+    const sampleOrders = [
+      {
+        customer_email: 'customer1@example.com',
+        product_title: 'Custom T-Shirt',
+        total_price: 29.99,
+        status: 'processing'
+      },
+      {
+        customer_email: 'customer2@example.com',
+        product_title: 'Custom Hoodie', 
+        total_price: 49.99,
+        status: 'shipped'
+      }
+    ];
+    
+    sampleOrders.forEach((order, index) => {
+      db.run(`
+        INSERT OR IGNORE INTO customer_orders 
+        (shop_id, shopify_order_id, customer_id, customer_email, design_id, product_id, product_title, quantity, unit_price, total_price, order_status) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        storeId,
+        `order_${Date.now()}_${index}`,
+        `customer_${index + 1}`,
+        order.customer_email,
+        index + 1,
+        `product_${index + 1}`,
+        order.product_title,
+        1,
+        order.total_price,
+        order.total_price,
+        order.status
+      ]);
+    });
+    
+    console.log('✅ Sample data inserted successfully');
+  });
+};
+
 // Initialize database and insert defaults
 export const initDB = async () => {
   try {
     await initDatabase();
     insertDefaultSettings();
+    insertSampleData();
     console.log('🗄️ Admin database ready');
   } catch (error) {
     console.error('❌ Database setup failed:', error);
