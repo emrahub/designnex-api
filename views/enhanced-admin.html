@@ -29,10 +29,10 @@
         <button class="mobile-menu-button" onclick="toggleMobileSidebar()" aria-label="Toggle menu">
             <i class="fas fa-bars"></i>
         </button>
-        <div class="mobile-brand">
-            <i class="fas fa-cube mobile-brand-icon"></i>
+        <a href="/" class="mobile-brand" aria-label="DesignNex Studio - Creative Design Solutions">
+            <i class="fas fa-bolt mobile-brand-icon" aria-hidden="true"></i>
             <h1 class="mobile-brand-title">DesignNex Studio</h1>
-        </div>
+        </a>
         <button class="mobile-menu-button" onclick="logout()" aria-label="Logout">
             <i class="fas fa-sign-out-alt"></i>
         </button>
@@ -46,11 +46,13 @@
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-brand">
-                    <div class="brand-logo">
-                        <i class="fas fa-cube"></i>
-                    </div>
+                    <a href="/" class="brand-logo" aria-label="DesignNex Studio - Creative Design Solutions">
+                        <i class="fas fa-bolt" aria-hidden="true"></i>
+                    </a>
                     <div class="brand-text nav-text">
-                        <h2 class="brand-title">DesignNex Studio</h2>
+                        <a href="/" class="brand-title-link">
+                            <h2 class="brand-title">DesignNex Studio</h2>
+                        </a>
                         <div class="brand-status">
                             <span class="status-dot"></span>
                             <p class="brand-subtitle">Admin Dashboard</p>

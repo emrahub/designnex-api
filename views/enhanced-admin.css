@@ -202,12 +202,19 @@ body {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-brand:hover {
+  opacity: 0.8;
 }
 
 .mobile-brand-icon {
   font-size: var(--font-size-lg);
-  color: var(--neutral-800);
+  color: #4F46E5;
   font-weight: 600;
+  text-shadow: 0 1px 2px rgba(79, 70, 229, 0.3);
 }
 
 .mobile-brand-title {
@@ -274,28 +281,31 @@ body {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-width: 200px;
+  transition: all 0.3s ease;
 }
 
 .brand-logo {
-  width: 42px;
-  height: 42px;
-  background: var(--shopify-primary);
-  border-radius: var(--radius-lg);
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
   color: var(--neutral-0);
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-base);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  transition: all 0.3s ease;
   cursor: pointer;
+  text-decoration: none;
+  border: none;
 }
 
 .brand-logo:hover {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  color: #000000;
+  opacity: 0.8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
 }
 
 .brand-logo i {
@@ -308,6 +318,15 @@ body {
 
 .brand-text {
   flex: 1;
+}
+
+.brand-title-link {
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.brand-title-link:hover {
+  opacity: 0.8;
 }
 
 .brand-title {
@@ -1449,6 +1468,22 @@ body {
 
 /* Mobile notification adjustments */
 /* Enhanced Mobile Experience */
+@media (max-width: 768px) {
+  .sidebar-brand {
+    min-width: 150px;
+  }
+  
+  .brand-logo {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+  
+  .brand-title {
+    font-size: var(--font-size-lg);
+  }
+}
+
 @media (max-width: 640px) {
   .notification {
     top: 70px;
@@ -1456,6 +1491,16 @@ body {
     left: var(--space-4);
     min-width: auto;
     max-width: none;
+  }
+  
+  .sidebar-brand {
+    min-width: 120px;
+  }
+  
+  .brand-logo {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
   }
   
   /* Mobile touch targets */
